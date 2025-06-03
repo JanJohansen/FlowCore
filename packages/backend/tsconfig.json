@@ -1,0 +1,26 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "ES2022",
+		"moduleResolution": "bundler",
+		"outDir": "./dist",
+		"rootDir": "./src",
+		"strict": false,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"allowJs": true,
+		"baseUrl": ".",
+		"noImplicitAny": false,
+		"paths": {
+			"@webapp/common": ["../common/dist/index.d.ts"],
+			"@webapp/common/*": ["../common/dist/*"]
+		}
+	},
+	"ts-node": {
+		"esm": true,
+		"experimentalSpecifiers": true
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "../common"]
+}

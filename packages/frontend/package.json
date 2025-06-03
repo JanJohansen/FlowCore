@@ -1,0 +1,27 @@
+{
+	"name": "@webapp/frontend",
+	"version": "1.0.0",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"build:check": "vue-tsc && vite build",
+		"preview": "vite preview",
+		"clean": "rm -rf dist node_modules"
+	},
+	"dependencies": {
+		"@webapp/common": "workspace:*",
+		"monaco-editor": "^0.52.2",
+		"pinia": "^3.0.1",
+		"vite-plugin-monaco-editor-esm": "^2.0.2",
+		"vue": "^3.3.8",
+		"vue-router": "^4.5.0"
+	},
+	"devDependencies": {
+		"@vitejs/plugin-vue": "^4.5.0",
+		"typescript": "^5.3.2",
+		"vite": "^5.0.0",
+		"vue-tsc": "^1.8.22"
+	}
+}
