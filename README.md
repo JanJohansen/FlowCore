@@ -16,6 +16,7 @@ integration.
 ├── pnpm-workspace.yaml   # pnpm workspace configuration
 ├── package.json          # Root package.json with workspace scripts
 ├── start-dev.bat         # Development startup script (Windows)
+├── start-dev.sh          # Development startup script (Linux/macOS)
 └── README.md             # This file
 ```
 
@@ -52,8 +53,12 @@ pnpm build
 # Start all services in development mode
 pnpm dev
 
-# Or use the batch file on Windows
+# Or use platform-specific startup scripts:
+# Windows
 start-dev.bat
+
+# Linux/macOS
+./start-dev.sh
 ```
 
 This will start:
@@ -252,10 +257,12 @@ pnpm --filter common build
 
 ### Development Tips
 
--   Use separate terminal windows for each package (via `start-dev.bat`)
+-   Use separate terminal windows for each package (via `start-dev.bat` or `start-dev.sh`)
 -   Monitor backend logs for CoreDB and flow execution messages
 -   Frontend hot reload works automatically with Vite
 -   Common package changes trigger rebuilds in dependent packages
+-   Use `pnpm --filter <package>` to run commands on specific packages
+-   Database file (`data/db.json`) is tracked in git for shared development data
 
 ## �📝 Migration Notes
 
