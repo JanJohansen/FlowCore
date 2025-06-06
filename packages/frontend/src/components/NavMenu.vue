@@ -1,5 +1,5 @@
 <template>
-	<nav class="nav-menu" ref="menuRef">
+	<nav class="nav-menu" ref="menuRef" @mouseenter="openMenu" @mouseleave="closeMenu">
 		<div class="dropdown">
 			<button class="dropdown-toggle" @click="toggleMenu">
 				<i class="fa fa-navicon"></i>
@@ -21,13 +21,24 @@
 
 	const isOpen = ref(false)
 	const menuRef = ref<HTMLElement | null>(null)
+	const closeTimeout = ref<number | null>(null)
 
 	const toggleMenu = () => {
 		isOpen.value = !isOpen.value
 	}
 
+	const openMenu = () => {
+		if (closeTimeout.value) {
+			clearTimeout(closeTimeout.value)
+			closeTimeout.value = null
+		}
+		isOpen.value = true
+	}
+
 	const closeMenu = () => {
-		isOpen.value = false
+		closeTimeout.value = window.setTimeout(() => {
+			isOpen.value = false
+		}, 200) // 200ms delay before closing
 	}
 
 	const handleClickOutside = (event: MouseEvent) => {
@@ -42,6 +53,9 @@
 
 	onUnmounted(() => {
 		document.removeEventListener("click", handleClickOutside)
+		if (closeTimeout.value) {
+			clearTimeout(closeTimeout.value)
+		}
 	})
 </script>
 

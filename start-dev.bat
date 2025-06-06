@@ -15,7 +15,4 @@ start "Backend Server - Port 3000" cmd /k "cd packages/backend && pnpm dev"
 echo Starting Frontend development server...
 start "Frontend Dev Server - Port 5173" cmd /k "cd packages/frontend && pnpm dev"
 
-echo.
-echo All development servers are starting in separate windows.
-echo Close this window or press any key to exit.
-pause > nul
+cmd code .

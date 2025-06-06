@@ -42,6 +42,12 @@ export const useNotificationStore = defineStore('notificationStore', () => {
         const unsubscribe = db.onPatch(key, (patch: Record<string, any>) => {
             console.log('Received user notifications patch:', patch)
 
+            // Guard against null/undefined patch
+            if (!patch || typeof patch !== 'object') {
+                console.warn('Received invalid patch for user notifications:', patch)
+                return
+            }
+
             for (const [notificationId, notificationData] of Object.entries(patch)) {
                 if (notificationData === null) {
                     // Remove notification
@@ -70,6 +76,12 @@ export const useNotificationStore = defineStore('notificationStore', () => {
 
         const unsubscribe = db.onPatch(key, (patch: Record<string, any>) => {
             console.log('Received user alarms patch:', patch)
+
+            // Guard against null/undefined patch
+            if (!patch || typeof patch !== 'object') {
+                console.warn('Received invalid patch for user alarms:', patch)
+                return
+            }
 
             for (const [alarmId, alarmData] of Object.entries(patch)) {
                 if (alarmData === null) {
