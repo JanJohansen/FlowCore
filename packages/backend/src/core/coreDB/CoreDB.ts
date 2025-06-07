@@ -4,6 +4,7 @@ import { dirname } from 'node:path'
 // Types
 type Callback<T> = (data: T) => void
 type UnsubscribeFunction = () => void
+type RPCCallback = (...args: any[]) => any | Promise<any>
 
 interface StoredValue<T> {
     value: T
@@ -458,6 +459,7 @@ export class CoreDB {
     private static instance: CoreDB
     private data: Map<string, any> = new Map();
     private filePath: string = "";
+    private rpcHandlers: Map<string, RPCCallback> = new Map();
 
     constructor() {
         this.valueStore = new ValueStore()
@@ -714,6 +716,35 @@ export class CoreDB {
         return this.onPatch(key, callback)
     }
 
+    /**
+     * Register a callback function that can be invoked remotely by other CoreDB users
+     * @param key Unique identifier for the RPC endpoint
+     * @param callback Function to be called when this RPC is invoked (can be sync or async)
+     */
+    onCall(key: string, callback: RPCCallback): void {
+        this.rpcHandlers.set(key, callback)
+    }
+
+    /**
+     * Call a registered RPC handler
+     * @param key The RPC endpoint identifier
+     * @param args Arguments to pass to the RPC handler
+     * @returns Promise that resolves with the result from the RPC handler
+     */
+    async call(key: string, ...args: any[]): Promise<any> {
+        const handler = this.rpcHandlers.get(key)
+        if (!handler) {
+            throw new Error(`RPC handler '${key}' not found`)
+        }
+
+        try {
+            const result = await handler(...args)
+            return result
+        } catch (error) {
+            throw new Error(`RPC call '${key}' failed: ${error instanceof Error ? error.message : String(error)}`)
+        }
+    }
+
     // Add method to access all data (for IndexManager use)
     getAllData(): IterableIterator<[string, any]> {
         return this.data.entries()
@@ -809,6 +840,25 @@ export class CoreDBUser {
             setUnsubscribe()
             this.subscriptions.delete(key + ':set')
         }
+    }
+
+    /**
+     * Register a callback function that can be invoked remotely by other CoreDB users
+     * @param key Unique identifier for the RPC endpoint
+     * @param callback Function to be called when this RPC is invoked (can be sync or async)
+     */
+    onCall(key: string, callback: RPCCallback): void {
+        this.db.onCall(key, callback)
+    }
+
+    /**
+     * Call a registered RPC handler
+     * @param key The RPC endpoint identifier
+     * @param args Arguments to pass to the RPC handler
+     * @returns Promise that resolves with the result from the RPC handler
+     */
+    async call(key: string, ...args: any[]): Promise<any> {
+        return await this.db.call(key, ...args)
     }
 
     /**

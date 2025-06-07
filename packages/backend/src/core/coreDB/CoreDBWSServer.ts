@@ -7,11 +7,12 @@ const SERVER_STATUS_KEY = 'serverStatus'
 interface WSMessage {
     cmd?: 'set' | 'patch' | 'on' | 'onPatch' | 'onSet' | 'unsubscribe' | 'onCall'
     call?: 'get' | 'call'
-    type?: 'response' | 'update' | 'callRequest'
+    type?: 'response' | 'update' | 'callRequest' | 'callResponse'
     id?: number
     key?: string
     value?: any
     patch?: any
+    args?: any[]
     success?: boolean
     error?: string
     result?: any
@@ -22,6 +23,7 @@ export class CoreDBWebSocket {
     private db: CoreDB
     private clientUsers: Map<WebSocket, CoreDBUser> = new Map();
     private registeredFunctions: Map<string, WebSocket> = new Map(); // Track which client registered which function
+    private pendingCalls: Map<number, WebSocket> = new Map(); // Track pending RPC calls
 
     constructor(server: Server, db?: CoreDB) {
         this.db = db || CoreDB.getGlobalInstance()
@@ -62,11 +64,8 @@ export class CoreDBWebSocket {
             })
 
             ws.on('close', () => {
-                const dbUser = this.clientUsers.get(ws)
-                if (dbUser) {
-                    dbUser.unsubscribeAll()
-                    this.clientUsers.delete(ws)
-                }
+                this.cleanupClientSubscriptions(ws)
+                this.cleanupClientRegistrations(ws)
 
                 // Update connected clients count and remove IP
                 const currentClients = this.wss.clients.size
@@ -81,6 +80,12 @@ export class CoreDBWebSocket {
     }
 
     private handleMessage(ws: WebSocket, message: WSMessage): void {
+        // Handle response messages (from RPC calls)
+        if (message.type === 'callResponse') {
+            this.handleCallResponse(ws, message)
+            return
+        }
+
         // Handle commands (no return value expected)
         if (message.cmd) {
             switch (message.cmd) {
@@ -136,8 +141,8 @@ export class CoreDBWebSocket {
             return
         }
 
-        console.log('ERROR - Message must specify either cmd or call')
-        this.sendError(ws, message.id, 'Message must specify either cmd or call')
+        console.log('ERROR - Message must specify either cmd, call, or be a response')
+        this.sendError(ws, message.id, 'Message must specify either cmd, call, or be a response')
     }
 
     // Commands (no return value)
@@ -269,6 +274,21 @@ export class CoreDBWebSocket {
             return
         }
 
+        // First check if the function is registered locally on the server
+        const dbUser = this.clientUsers.get(callerWs)!
+        try {
+            const result = await dbUser.call(message.key, ...(message.value || []))
+            this.sendMessage(callerWs, {
+                type: 'response',
+                id: message.id,
+                success: true,
+                result: result
+            })
+            return
+        } catch (localError) {
+            // Function not found locally, try remote clients
+        }
+
         const targetWs = this.registeredFunctions.get(message.key)
         if (!targetWs) {
             this.sendError(callerWs, message.id, `Function '${message.key}' not found`)
@@ -276,16 +296,45 @@ export class CoreDBWebSocket {
         }
 
         try {
+            // Track this pending call
+            this.pendingCalls.set(message.id!, callerWs)
+
             // Forward the call to the target client
             this.sendMessage(targetWs, {
                 type: 'callRequest',
                 id: message.id,
                 key: message.key,
-                value: message.value
+                args: message.value || []
             })
         } catch (error) {
+            this.pendingCalls.delete(message.id!)
             this.sendError(callerWs, message.id, 'Function call failed')
         }
+    }
+
+    private handleCallResponse(ws: WebSocket, message: WSMessage): void {
+        if (!message.id) {
+            console.log('ERROR - Missing call ID in response')
+            return
+        }
+
+        const callerWs = this.pendingCalls.get(message.id)
+        if (!callerWs) {
+            console.log('ERROR - No pending call found for ID:', message.id)
+            return
+        }
+
+        // Remove from pending calls
+        this.pendingCalls.delete(message.id)
+
+        // Forward the response to the original caller
+        this.sendMessage(callerWs, {
+            type: 'response',
+            id: message.id,
+            success: message.success,
+            result: message.result,
+            error: message.error
+        })
     }
 
     private cleanupClientSubscriptions(ws: WebSocket): void {

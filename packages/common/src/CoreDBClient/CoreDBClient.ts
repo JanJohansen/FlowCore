@@ -269,7 +269,7 @@ export class CoreDBClient {
         }
     }
 
-    public async call(key: string, args: any): Promise<any> {
+    public async call(key: string, ...args: any[]): Promise<any> {
         const response = await this.sendCall({
             call: 'call',
             key,
@@ -432,8 +432,8 @@ export class CoreDBWrapper {
         return await this.client.get(key)
     }
 
-    public async call(key: string, args: any): Promise<any> {
-        return await this.client.call(key, args)
+    public async call(key: string, ...args: any[]): Promise<any> {
+        return await this.client.call(key, ...args)
     }
 
     public onCall(key: string, callback: Function): () => void {

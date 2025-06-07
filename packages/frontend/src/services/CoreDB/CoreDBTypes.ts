@@ -1,12 +1,12 @@
 export interface CoreDBMessage {
     cmd?: 'set' | 'patch' | 'on' | 'onPatch' | 'onSet' | 'unsubscribe' | 'onCall'
     call?: 'get' | 'call'
-    type?: 'response' | 'update' | 'callRequest'
+    type?: 'response' | 'update' | 'callRequest' | 'callResponse'
     id?: number
     key?: string
     value?: any
     patch?: any
-    args?: any
+    args?: any[]
     success?: boolean
     error?: string
     result?: any

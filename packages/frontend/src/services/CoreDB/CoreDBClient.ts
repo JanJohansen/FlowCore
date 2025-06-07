@@ -77,16 +77,18 @@ export class CoreDBClient {
         }
 
         try {
-            const result = await func(message.value)
+            // Use args array if available, otherwise fall back to value
+            const args = message.args || (message.value ? [message.value] : [])
+            const result = await func(...args)
             this.sendSuccessResponse(message.id!, result)
         } catch (error) {
-            this.sendErrorResponse(message.id!, 'Function execution failed')
+            this.sendErrorResponse(message.id!, `Function execution failed: ${error instanceof Error ? error.message : String(error)}`)
         }
     }
 
     private sendErrorResponse(id: number, error: string): void {
         this.sendMessage({
-            type: 'response',
+            type: 'callResponse',
             id,
             success: false,
             error
@@ -95,7 +97,7 @@ export class CoreDBClient {
 
     private sendSuccessResponse(id: number, result: any): void {
         this.sendMessage({
-            type: 'response',
+            type: 'callResponse',
             id,
             success: true,
             result
@@ -269,7 +271,7 @@ export class CoreDBClient {
         }
     }
 
-    public async call(key: string, args: any): Promise<any> {
+    public async call(key: string, ...args: any[]): Promise<any> {
         const response = await this.sendCall({
             call: 'call',
             key,
@@ -432,8 +434,8 @@ export class CoreDBWrapper {
         return await this.client.get(key)
     }
 
-    public async call(key: string, args: any): Promise<any> {
-        return await this.client.call(key, args)
+    public async call(key: string, ...args: any[]): Promise<any> {
+        return await this.client.call(key, ...args)
     }
 
     public onCall(key: string, callback: Function): () => void {

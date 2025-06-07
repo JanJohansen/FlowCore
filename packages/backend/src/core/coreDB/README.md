@@ -10,7 +10,7 @@ A lightweight, reactive key-value store with indexing capabilities for TypeScrip
 -   🔗 Dual update methods: partial patches and complete overwrites
 -   🎯 Dual subscription types: patch-based and value-based
 -   🎯 Singleton pattern for global state management
--   📞 Remote function calling between clients
+-   📞 Remote Procedure Call (RPC) system for distributed function execution
 
 ## Core API
 

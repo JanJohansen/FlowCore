@@ -7,7 +7,6 @@ import { CoreDB } from "./core/coreDB/CoreDB"
 import { CoreDBWebSocket } from "./core/coreDB/CoreDBWSServer"
 import { Z2M } from './z2m/Z2M'
 import { FlowCore } from './core/FlowCore/flowCore'
-import { NodeEditorManager } from './core/FlowCore/nodeEditorManager'
 
 // ****************************************************************************
 // Initialize CoreDB and WebSocket server
@@ -81,11 +80,6 @@ setInterval(() => {
 // ****************************************************************************
 // Initialize FlowCore
 const flowCore = new FlowCore(db)
-
-// ****************************************************************************
-// Initialize nodeEditorManager
-const nodeEditorManager = new NodeEditorManager()
-
 
 // ****************************************************************************
 // Initialize Zigbee2MQTT

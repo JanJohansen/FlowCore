@@ -23,6 +23,33 @@ export class FlowCore {
 
     async setup() {
         await this.loadCustomNodes()
+        fs.watch(CUSTOM_NODES_FOLDER, { recursive: true }, async (event, filename) => {
+            console.log('Custom node file changed:', filename)
+            await this.loadCustomNodes()
+        })
+
+        this.db.onCall("flowCore.calls.saveCustomNodeFile", async (path: string, content: string) => {
+            const targetPath = CUSTOM_NODES_FOLDER + "." + path
+            console.log("Saving to:", targetPath)
+            await fs.promises.mkdir(targetPath, { recursive: true })
+            await fs.promises.writeFile(targetPath, content)
+        })
+
+        this.db.onCall("flowCore.calls.loadCustomNodeFile", async (path: string) => {
+            const targetPath = CUSTOM_NODES_FOLDER + "." + path
+            fs.readFile(targetPath, (err, data) => {
+                if (err) return null
+                return data.toString()
+            })
+        })
+
+        this.db.onCall("flowCore.calls.deleteCustomNodeFile", (path: string) => {
+            const targetPath = CUSTOM_NODES_FOLDER + "." + path
+            fs.rm(targetPath, (err) => {
+                if (err) throw err
+            })
+        })
+
         this.monitorFlows()
     }
 
@@ -34,8 +61,8 @@ export class FlowCore {
             const folderArray = folders.map(dirent => dirent.name)
 
             // Publish the list of custom node folders to DB
-            this.db.patch('customNodes', folderArray)
-            console.log('************************ Custom nodes:', folders, customNodesPath)
+            this.db.set('customNodes', folderArray)
+            console.log('Custom nodes:', folders, customNodesPath)
 
             for (const folder of folders) {
                 console.log('************************ Loading custom node:', folder.name)
