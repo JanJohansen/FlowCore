@@ -11,6 +11,8 @@
 		"clean": "rm -rf dist node_modules"
 	},
 	"dependencies": {
+		"@vue/compiler-dom": "^3.3.8",
+		"@vue/compiler-sfc": "^3.3.8",
 		"@webapp/common": "workspace:*",
 		"monaco-editor": "^0.52.2",
 		"pinia": "^3.0.1",

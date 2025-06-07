@@ -1,0 +1,22 @@
+
+
+1) Add a view (incl. route + nav updates) that implements a "node type list" and a code editor (use existing monacoeditor component) to edit vue single file component definition (.vue file).  
+When a save button is clicked, the code is compiled locally using @vue/compiler-sfc @vue/compiler-dom and the result is shown next to the editor by using a dynamic component. 
+Implement storing and loading w. localstorage for now.  
+Prepare for pre-setting type info for the code editor.
+
+2) When i open the function codeeditormodal.vue, I get the following error in the console. Can you fix it? 
+node_modules/monaco-editor/min/vs/language/typescript/ts.worker.js:1 Failed to load module script: The server responded with a non-JavaScript MIME type of "text/html". Strict MIME type checking is enforced for module scripts per HTML spec.Understand this error
+chunk-CF5DMO3C.js?v=9e08a97f:40897 Could not create web worker(s). Falling back to loading web worker code in main thread, which might cause UI freezes. Please see https://github.com/microsoft/monaco-editor#faq
+
+<template>
+    <button>Press me!</button>
+</template>
+
+<script setup lang="ts">
+	import { ref, defineAsyncComponent } from "vue"
+</script>
+
+<style scoped>
+
+</style>

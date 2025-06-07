@@ -1,7 +1,7 @@
 <template>
 	<nav class="nav-menu" ref="menuRef" @mouseenter="openMenu" @mouseleave="closeMenu">
 		<div class="dropdown">
-			<button class="dropdown-toggle" @click="toggleMenu">
+			<button class="dropdown-toggle" @click="deprecated - toggleMenu">
 				<i class="fa fa-navicon"></i>
 				<span class="arrow" :class="{ 'arrow-up': isOpen }">▼</span>
 			</button>
@@ -11,6 +11,7 @@
 				<li><router-link to="/coredb" @click="closeMenu">CoreDB Browser</router-link></li>
 				<li><router-link to="/dash-designer" @click="closeMenu">Dash Designer</router-link></li>
 				<li><router-link to="/dash-viewer" @click="closeMenu">Dash Viewer</router-link></li>
+				<li><router-link to="/component-editor" @click="closeMenu">Component Editor</router-link></li>
 			</ul>
 		</div>
 	</nav>

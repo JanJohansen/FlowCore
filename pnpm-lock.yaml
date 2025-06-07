@@ -85,6 +85,12 @@ importers:
 
   packages/frontend:
     dependencies:
+      '@vue/compiler-dom':
+        specifier: ^3.3.8
+        version: 3.5.16
+      '@vue/compiler-sfc':
+        specifier: ^3.3.8
+        version: 3.5.16
       '@webapp/common':
         specifier: workspace:*
         version: link:../common

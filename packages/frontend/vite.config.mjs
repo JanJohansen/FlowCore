@@ -1,9 +1,10 @@
 import { defineConfig } from "vite"
 import vue from "@vitejs/plugin-vue"
 import path from "path"
+import monacoEditorEsmPlugin from "vite-plugin-monaco-editor-esm"
 
 export default defineConfig({
-	plugins: [vue()],
+	plugins: [vue(), monacoEditorEsmPlugin()],
 	resolve: {
 		alias: {
 			"@": path.resolve(__dirname, "./src/"),
