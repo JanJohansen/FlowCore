@@ -74,22 +74,18 @@ export class CoreDBWSTransport extends BaseTransport {
             clearTimeout(this.reconnectTimer)
         }
 
-        if (this.reconnectAttempts < this.maxReconnectAttempts) {
-            this.reconnectAttempts++
-            console.log(`Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts}) in ${this.reconnectDelay}ms...`)
+        this.reconnectAttempts++
+        console.log(`Attempting to reconnect (${this.reconnectAttempts}) in ${this.reconnectDelay}ms...`)
 
-            this.reconnectTimer = setTimeout(async () => {
-                try {
-                    await this.createConnection()
-                } catch (error) {
-                    console.error('Reconnection attempt failed:', error)
-                    // Exponential backoff
-                    this.reconnectDelay = Math.min(this.reconnectDelay * 1.5, 10000) // Cap at 10 seconds
-                }
-            }, this.reconnectDelay)
-        } else {
-            console.error('Max reconnection attempts reached')
-        }
+        this.reconnectTimer = setTimeout(async () => {
+            try {
+                await this.createConnection()
+            } catch (error) {
+                console.error('Reconnection attempt failed:', error)
+                // Exponential backoff
+                this.reconnectDelay = Math.min(this.reconnectDelay * 1.5, 10000) // Cap at 10 seconds
+            }
+        }, this.reconnectDelay)
     }
 
     disconnect(): void {

@@ -10,15 +10,28 @@
 					<div v-for="(port, portId) in nodeDefinition.ins" :key="portId" class="input-row">
 						<div class="input-label">
 							<label :for="`input-${portId}`">{{ portId }}</label>
-							<span class="input-type">({{ port.valueType }})</span>
+							<span class="input-type">({{ port.type }})</span>
 							<span v-if="port.description" class="input-description">{{ port.description }}</span>
 						</div>
 						<div class="input-control">
+							<select
+								v-if="port.type === 'enum'"
+								:id="`input-${portId}`"
+								:value="rawInputValues[portId] || ''"
+								@input="handleEnumInput(portId, $event.target.value)"
+								:placeholder="getPlaceholderForType(port.type)"
+								:class="{ 'invalid-json': !inputValidation[portId]?.isValid && rawInputValues[portId] }"
+							>
+								<option v-for="option in port.options" :value="option" :key="option">
+									{{ option }}
+								</option>
+							</select>
 							<input
+								v-else
 								:id="`input-${portId}`"
 								:value="rawInputValues[portId] || ''"
 								@input="handleInput(portId, $event.target.value)"
-								:placeholder="getPlaceholderForType(port.valueType)"
+								:placeholder="getPlaceholderForType(port.type)"
 								:class="{ 'invalid-json': !inputValidation[portId]?.isValid && rawInputValues[portId] }"
 							/>
 							<button
@@ -112,14 +125,31 @@
 				return "{}"
 			case "array":
 				return "[]"
+			case "enum":
+				return "enum string"
 			default:
 				return "Enter value..."
 		}
 	}
 
+	function handleEnumInput(portId: string, value: string) {
+		rawInputValues[portId] = '"' + value + '"'
+		validateInput(portId)
+
+		// Update the port value in the node definition to allow dynamic node configuration
+		if (!nodeDefinition.value?.ins) return
+		const port = nodeDefinition.value?.ins[portId]
+		port.value = value
+	}
+
 	function handleInput(portId: string, value: string) {
 		rawInputValues[portId] = value
 		validateInput(portId)
+
+		// Update the port value in the node definition to allow dynamic node configuration
+		if (!nodeDefinition.value?.ins) return
+		const port = nodeDefinition.value?.ins[portId]
+		port.value = value
 	}
 
 	function validateInput(portId: string) {
@@ -266,6 +296,7 @@
 		align-items: center;
 	}
 
+	.input-control select,
 	.input-control input {
 		flex-grow: 1;
 		padding: 8px;
@@ -276,17 +307,20 @@
 		transition: all 0.2s ease;
 	}
 
+	.input-control select:focus,
 	.input-control input:focus {
 		outline: none;
 		border-color: #2196f3;
 		box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
 	}
 
+	.input-control select.invalid-json,
 	.input-control input.invalid-json {
 		border-color: #f44336;
 		border-width: 3px;
 	}
 
+	.input-control select.invalid-json:focus,
 	.input-control input.invalid-json:focus {
 		border-color: #f44336;
 		box-shadow: 0 0 0 2px rgba(244, 67, 54, 0.2);

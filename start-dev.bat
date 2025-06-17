@@ -15,4 +15,8 @@ start "Backend Server - Port 3000" cmd /k "cd packages/backend && pnpm dev"
 echo Starting Frontend development server...
 start "Frontend Dev Server - Port 5173" cmd /k "cd packages/frontend && pnpm dev"
 
+echo Starting VS Code
 cmd code .
+
+cmd exit
+

@@ -28,14 +28,14 @@ export class FlowCore {
             await this.loadCustomNodes()
         })
 
-        this.db.onCall("flowCore.calls.saveCustomNodeFile", async (path: string, content: string) => {
+        this.db.onCall("flowCore:saveCustomNodeFile", async (path: string, content: string) => {
             const targetPath = CUSTOM_NODES_FOLDER + "." + path
             console.log("Saving to:", targetPath)
             await fs.promises.mkdir(targetPath, { recursive: true })
             await fs.promises.writeFile(targetPath, content)
         })
 
-        this.db.onCall("flowCore.calls.loadCustomNodeFile", async (path: string) => {
+        this.db.onCall("flowCore:loadCustomNodeFile", async (path: string) => {
             const targetPath = CUSTOM_NODES_FOLDER + "." + path
             fs.readFile(targetPath, (err, data) => {
                 if (err) return null
@@ -43,7 +43,7 @@ export class FlowCore {
             })
         })
 
-        this.db.onCall("flowCore.calls.deleteCustomNodeFile", (path: string) => {
+        this.db.onCall("flowCore:deleteCustomNodeFile", (path: string) => {
             const targetPath = CUSTOM_NODES_FOLDER + "." + path
             fs.rm(targetPath, (err) => {
                 if (err) throw err

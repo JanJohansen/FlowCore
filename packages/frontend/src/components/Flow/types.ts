@@ -30,15 +30,39 @@ export interface INodeDefinition {
     author?: string
     company?: string
     license?: string
-    ins?: { [inputName: string]: NodePort }
-    outs?: { [outputName: string]: NodePort }
+    ins?: { [inputName: string]: stringNodeIO | numberNodeIO | booleanNodeIO | enumNodeIO }
+    outs?: { [outputName: string]: stringNodeIO | numberNodeIO | booleanNodeIO | enumNodeIO }
 }
 
-export interface NodePort {
-    valueType: string
+export interface stringNodeIO {
+    type: "string"
     description?: string
-    value?: any
-    default?: any
+    default?: string
+    value?: string
+}
+
+interface numberNodeIO {
+    type: "number"
+    description?: string
+    default?: number
+    value?: number
+    maxVal?: number
+    minVal?: number
+}
+
+interface booleanNodeIO {
+    type: "boolean"
+    description?: string
+    default?: boolean
+    value?: boolean
+}
+
+interface enumNodeIO {
+    type: "enum"
+    options: string[]
+    description?: string
+    default?: string
+    value?: string
 }
 
 
