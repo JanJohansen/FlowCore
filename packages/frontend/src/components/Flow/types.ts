@@ -30,8 +30,8 @@ export interface INodeDefinition {
     author?: string
     company?: string
     license?: string
-    ins?: { [inputName: string]: stringNodeIO | numberNodeIO | booleanNodeIO | enumNodeIO }
-    outs?: { [outputName: string]: stringNodeIO | numberNodeIO | booleanNodeIO | enumNodeIO }
+    ins?: { [inputName: string]: stringNodeIO | numberNodeIO | booleanNodeIO | enumNodeIO | objectNodeIO | arrayNodeIO | anyNodeIO }
+    outs?: { [outputName: string]: stringNodeIO | numberNodeIO | booleanNodeIO | enumNodeIO | objectNodeIO | arrayNodeIO | anyNodeIO }
 }
 
 export interface stringNodeIO {
@@ -48,6 +48,8 @@ interface numberNodeIO {
     value?: number
     maxVal?: number
     minVal?: number
+    step?: number
+    useSlider?: boolean
 }
 
 interface booleanNodeIO {
@@ -55,6 +57,7 @@ interface booleanNodeIO {
     description?: string
     default?: boolean
     value?: boolean
+    useCheckbox?: boolean
 }
 
 interface enumNodeIO {
@@ -63,6 +66,27 @@ interface enumNodeIO {
     description?: string
     default?: string
     value?: string
+}
+
+interface objectNodeIO {
+    type: "object"
+    description?: string
+    default?: object
+    value?: object
+}
+
+interface arrayNodeIO {
+    type: "array"
+    description?: string
+    default?: any[]
+    value?: any[]
+}
+
+interface anyNodeIO {
+    type: "any"
+    description?: string
+    default?: any
+    value?: any
 }
 
 
