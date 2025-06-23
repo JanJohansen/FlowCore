@@ -1,0 +1,2 @@
+- When writing VUE components that are part of a component tree, do not emit events to be handled by parent components. Modify the state of the used models directly. (e.g. all flow rellated nodes in scr(components/flow/*) 
+- 

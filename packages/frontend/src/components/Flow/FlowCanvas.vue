@@ -8,14 +8,6 @@
 		@dragleave.prevent="handleDragLeave"
 		@drop.prevent="handleDrop"
 	>
-		<!-- Add the NodeEditorModal component -->
-		<NodeEditorModal
-			:visible="flowStore.editState.isEditModalVisible"
-			:nodeId="flowStore.editState.editingNodeId"
-			@close="flowStore.closeNodeEditor"
-			@save="handleNodeInputSave"
-		/>
-
 		<div class="flow-canvas" @pointerdown.prevent="handlePointerDown">
 			<div
 				class="canvas-content"
@@ -76,7 +68,6 @@
 	import { useFlowStore } from "../../stores/flowStore"
 	import { GRID_SIZE, MIN_ZOOM, MAX_ZOOM } from "./constants"
 	import DefaultNode from "./DefaultNode.vue"
-	import NodeEditorModal from "./NodeEditorModal.vue"
 	import type { IFlowConnection } from "./types"
 
 	// State declarations

@@ -6,6 +6,13 @@
 		:style="nodeStyles"
 		@pointerdown="handlePointerDown($event)"
 	>
+		<PropertyEditor
+			v-if="showPropertyEditor"
+			:node="node"
+			:node-definition="nodeDefinition"
+			:is-visible="showPropertyEditor"
+			@close="showPropertyEditor = false"
+		/>
 		<div class="node-content">
 			<div class="floating-actions">
 				<button class="floating-btn" @click.stop="handleEdit" title="Edit">
@@ -77,6 +84,7 @@
 	import { useFlowStore } from "../../stores/flowStore"
 	import type { INodeDefinition, IFlowNodeModel } from "./types"
 	import { GRID_SIZE, NODE_WIDTH } from "./constants"
+	import PropertyEditor from "./PropertyEditor.vue"
 
 	interface Props {
 		context: ICustomeNodeContext
@@ -95,10 +103,12 @@
 	const nodeTypeUID = computed(() => props.node.typeUID)
 	const initialPosition = computed(() => props.node.position)
 
+	// Property editor state
+	const showPropertyEditor = ref(false)
+
 	// Node action handlers - call FlowStore methods directly
 	function handleEdit() {
-		// Call FlowStore method directly instead of emitting event
-		flowStore.openNodeEditor(nodeId.value)
+		showPropertyEditor.value = true
 	}
 
 	function handleDuplicate() {
