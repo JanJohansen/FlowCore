@@ -249,12 +249,6 @@ npm install -g pnpm
 pnpm --filter common build
 ```
 
-**Custom nodes not loading**
-
--   Check that `packages/frontend/src/components/Flow/CustomNodes` exists
--   Verify backend can access the CustomNodes directory
--   Check backend logs for specific error messages
-
 ### Development Tips
 
 -   Use separate terminal windows for each package (via `start-dev.bat` or `start-dev.sh`)
@@ -264,20 +258,6 @@ pnpm --filter common build
 -   Use `pnpm --filter <package>` to run commands on specific packages
 -   Database file (`data/db.json`) is tracked in git for shared development data
 
-## �📝 Migration Notes
-
-This project was converted from separate npm workspaces to a pnpm monorepo structure:
-
--   ✅ Consolidated shared CoreDB client code
--   ✅ Added shared types and utilities
--   ✅ Configured proper TypeScript path mapping
--   ✅ Updated build processes for all packages
--   ✅ Created example usage demonstrations
--   ✅ Maintained existing functionality
--   ✅ Fixed CustomNodes path resolution
--   ✅ Updated database file location
--   ✅ Added missing dependencies
-
 ## 🤝 Contributing
 
 1. **Setup**: `pnpm install`
@@ -285,13 +265,6 @@ This project was converted from separate npm workspaces to a pnpm monorepo struc
 3. **Make changes** to any package
 4. **Test**: `pnpm build`
 5. **Commit** changes with descriptive messages
-
-### Code Style
-
--   Use TypeScript for all new code
--   Follow existing naming conventions
--   Add JSDoc comments for public APIs
--   Update tests when adding features
 
 ## 📄 License
 

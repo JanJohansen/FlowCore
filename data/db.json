@@ -64,6 +64,29 @@
           "ins": {},
           "outs": {}
         }
+      },
+      {
+        "id": "com.flow.Z2MObject_1750886838597",
+        "typeUID": "com.flow.Z2MObject",
+        "position": {
+          "x": 540,
+          "y": 140
+        },
+        "size": {
+          "width": 200,
+          "height": 200
+        },
+        "config": {
+          "ins": {
+            "objectId": {
+              "value": "option2"
+            },
+            "NEW_INPUT": {
+              "value": "42"
+            }
+          },
+          "outs": {}
+        }
       }
     ],
     "connections": [

@@ -1,15 +1,13 @@
-import { IBackendBaseNodeContext, ISetupContext } from '@webapp/common'
-import { CoreDB, CoreDBUser } from '../core/coreDB/CoreDB'
+import { IBackendBaseNodeContext, NodeBackendBase } from '@webapp/common'
+import { CoreDB, CoreDBUser } from '../coreDB/CoreDB'
 
-export class NodeBackendBaseV1 {
+export class NodeBackendBaseV1 extends NodeBackendBase {
     private db: any
     private dbUser: CoreDBUser
-    public context: ISetupContext
 
     constructor(context: IBackendBaseNodeContext) {
+        super(context)
         this.db = context.db
-        this.context = context as ISetupContext
-        delete this.context.db   // Don't expose db directly.
         this.dbUser = new CoreDBUser(this.db)
     }
 
@@ -26,17 +24,6 @@ export class NodeBackendBaseV1 {
     outs = {
         set: (outputName: string, value: any) => {
             this.dbUser.patch(this.context.node.id + ".outs." + outputName, value)
-        }
-    }
-
-    // Optional lifecycle methods that can be overridden by subclasses
-    setup?(): void
-    cleanup?(): void
-
-    // Internal cleanup method called by the framework
-    _baseCleanup(): void {
-        if (this.cleanup) {
-            this.cleanup()
         }
     }
 }

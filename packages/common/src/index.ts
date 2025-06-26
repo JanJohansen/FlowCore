@@ -20,12 +20,6 @@ export { CoreDBTCPTransport } from './CoreDBClient/CoreDBTCPTransport'
 
 // Export shared types, utilities, and constants
 export * from './types'
-export * from './utils'
-export * from './constants'
 
-// Export examples (optional)
-export * from './example'
-
-// Export NodeBackendBaseV1 for use in custom nodes (backend only)
-// Note: This will only work in Node.js environment
-export { NodeBackendBaseV1 } from './NodeBackendBaseV1'
+// Export abstract base class for backend nodes
+export { INodeBackendBaseV1 } from './INodeBackendBaseV1'

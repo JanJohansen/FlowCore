@@ -3,7 +3,7 @@ import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'url'
 import { IFlowModel, IFlowNodeModel, IBackendBaseNodeContext } from '@webapp/common'
-import { NodeBackendBaseV1 } from "../../shared/NodeBackendBaseV1"
+import { NodeBackendBaseV1 } from "./NodeBackendBaseV1"
 
 
 const __filename = fileURLToPath(import.meta.url)
@@ -233,7 +233,7 @@ export class FlowCore {
             }
             // Create node
             const instance = new NodeClass(context)
-            instance._baseSetup()
+            if (instance.setup) instance.setup()
 
             // Store the node instance for later cleanup
             this.nodes[node.id] = instance
