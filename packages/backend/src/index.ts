@@ -8,6 +8,9 @@ import { CoreDBWebSocket } from "./core/coreDB/CoreDBWSServer"
 import { Z2M } from './z2m/Z2M'
 import { FlowCore } from './core/FlowCore/flowCore'
 
+import { NodeBackendBaseV1 } from './core/FlowCore/NodeBackendBaseV1'
+export { NodeBackendBaseV1 }
+
 // ****************************************************************************
 // Initialize CoreDB and WebSocket server
 // const __filename = fileURLToPath(import.meta.url);

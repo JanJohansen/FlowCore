@@ -17,7 +17,9 @@
 		"noFallthroughCasesInSwitch": true,
 		"paths": {
 			"@/*": ["./src/*"],
-			"@webapp/common": ["../common/src/index.ts"]
+			"@webapp/common": ["../common/src/index.ts"],
+			"@webapp/backend": ["../backend/src/index.ts"],
+			"@webapp/backend/*": ["../backend/src/*"]
 		},
 		"baseUrl": "."
 	},

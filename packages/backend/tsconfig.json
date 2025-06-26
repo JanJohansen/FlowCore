@@ -14,7 +14,9 @@
 		"noImplicitAny": false,
 		"paths": {
 			"@webapp/common": ["../common/dist/index.d.ts"],
-			"@webapp/common/*": ["../common/dist/*"]
+			"@webapp/common/*": ["../common/dist/*"],
+			"@webapp/backend": ["../backend/src/index.ts"],
+			"@webapp/backend/*": ["../backend/src/*"]
 		}
 	},
 	"ts-node": {

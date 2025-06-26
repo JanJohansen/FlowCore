@@ -1,14 +1,16 @@
-import { IBackendBaseNodeContext, NodeBackendBase } from '@webapp/common'
+import { IBackendBaseNodeContext } from '@webapp/common'
 import { CoreDB, CoreDBUser } from '../coreDB/CoreDB'
 
-export class NodeBackendBaseV1 extends NodeBackendBase {
+export class NodeBackendBaseV1 {
     private db: any
     private dbUser: CoreDBUser
+    protected context: IBackendBaseNodeContext
 
     constructor(context: IBackendBaseNodeContext) {
-        super(context)
         this.db = context.db
         this.dbUser = new CoreDBUser(this.db)
+        this.context = context
+        delete this.context.db  // Prevent direct access to CoreDB interface
     }
 
     on = (propName: string, cb: (val: any) => void) => {
@@ -26,4 +28,8 @@ export class NodeBackendBaseV1 extends NodeBackendBase {
             this.dbUser.patch(this.context.node.id + ".outs." + outputName, value)
         }
     }
+
+    // Optional lifecycle methods that can be overridden by subclasses
+    setup?(): void
+    cleanup?(): void
 }

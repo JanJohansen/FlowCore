@@ -1,5 +1,5 @@
 // Export all CoreDB client functionality
-export * from './CoreDBClient/index'
+// export * from './CoreDBClient/index'
 
 // Re-export commonly used types and interfaces
 export type {
@@ -20,6 +20,3 @@ export { CoreDBTCPTransport } from './CoreDBClient/CoreDBTCPTransport'
 
 // Export shared types, utilities, and constants
 export * from './types'
-
-// Export abstract base class for backend nodes
-export { INodeBackendBaseV1 } from './INodeBackendBaseV1'
