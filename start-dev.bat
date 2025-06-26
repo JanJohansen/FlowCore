@@ -8,7 +8,7 @@ echo - Common package in watch mode
 echo.
 
 echo Starting VS Code
-cmd code .
+call code .
 
 echo Starting Common package (watch mode)...
 start "Common Package - Watch Mode" cmd /k "cd packages/common && pnpm watch"
@@ -17,4 +17,5 @@ echo Starting Frontend development server...
 start "Frontend Dev Server - Port 5173" cmd /k "cd packages/frontend && pnpm dev"
 
 echo Starting Backend server...
-cmd "Backend Server - Port 3000" cmd /k "cd packages/backend && pnpm dev"
+cd packages/backend && pnpm dev
+
