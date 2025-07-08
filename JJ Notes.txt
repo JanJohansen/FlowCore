@@ -20,3 +20,57 @@ chunk-CF5DMO3C.js?v=9e08a97f:40897 Could not create web worker(s). Falling back 
 <style scoped>
 
 </style>
+
+
+
+nodes folder structure 
+nodes
+    Example.Node.Collection
+        src
+            ExampleNode1
+                backend
+                    index.ts
+                frontend
+                    index.vue
+                index.ts    // Contains definitions + export of backend calsses and frontend omcponents
+        package.json
+
+Alternative: 
+    Example.Node.Collection
+        src
+            nodejs
+                ExampleNode1.ts
+                ExampleNode2.ts
+                index.ts // exports all node classes
+            vue
+                static  
+                    logo.png
+                shared  
+                    PropertyEditor.vue
+                ExampleNode1.vue
+                ExampleNode2.vue
+                index.vue // exports.nodeUIs.components + exports.dashUIs.components
+            common
+                types.ts
+                utils.ts
+            index.ts    // exports node descriptions, node classes, nodeUIs, dashUIs
+        package.json
+
+plugins/math-nodes/
+├── src/
+│   ├── nodes/                    # Server-side node classes
+│   │   ├── CalculatorNode.ts
+│   │   ├── StatisticsNode.ts
+│   │   └── index.ts
+│   ├── ui/                       # Vue UI components
+│   │   ├── components/
+│   │   │   ├── CalculatorUI.vue
+│   │   │   ├── StatisticsUI.vue
+│   │   │   └── shared/
+│   │   │       └── PropertyEditor.vue
+│   │   ├── index.ts              # UI exports
+│   │   └── types.ts              # UI-specific types
+│   ├── shared/                   # Shared types and utilities
+│   │   ├── types.ts
+│   │   └── utils.ts
+│   └── index.ts                  # Main server entry
