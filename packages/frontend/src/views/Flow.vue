@@ -4,6 +4,8 @@
 			<div class="header-content">
 				<h1>Flow Editor</h1>
 				<div class="flow-actions">
+					<testNodeUI msg="Test Node UI" />
+
 					<button class="action-button" title="Save" @click="flowStore.saveFlow">
 						<i class="fa fa-save"></i>
 						Save
@@ -37,6 +39,8 @@
 	import FlowCanvas from "../components/Flow/FlowCanvas.vue"
 	import FlowNodeTree from "../components/Flow/FlowNodeTree.vue"
 	import FlowsTree from "../components/Flow/FlowsTree.vue"
+
+	import testNodeUI from "@webapp/extensions/nodes/core-nodes/testNodeUI.vue"
 
 	const flowStore = useFlowStore()
 

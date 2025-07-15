@@ -3,8 +3,8 @@
 	"version": "1.0.0",
 	"private": true,
 	"scripts": {
-		"dev": "concurrently \"pnpm --filter backend dev\" \"pnpm --filter frontend dev\" \"pnpm --filter common watch\"",
-		"build": "pnpm --filter common build && pnpm --filter backend build && pnpm --filter frontend build",
+		"dev": "concurrently \"pnpm --filter backend dev\" \"pnpm --filter frontend dev\" \"pnpm --filter extensions dev\" \"pnpm --filter common watch\"",
+		"build": "pnpm --filter common build && pnpm --filter backend build && pnpm --filter frontend build pnpm --filter frontend build",
 		"start": "cross-env NODE_ENV=production pnpm --filter backend start",
 		"install:all": "pnpm install",
 		"clean": "pnpm --filter \"*\" clean && rm -rf node_modules"

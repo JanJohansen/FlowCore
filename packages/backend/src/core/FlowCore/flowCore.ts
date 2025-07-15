@@ -22,6 +22,7 @@ export class FlowCore {
     }
 
     async setup() {
+        // Load custom nodes from the specified folder
         await this.loadCustomNodes()
         fs.watch(CUSTOM_NODES_FOLDER, { recursive: true }, async (event, filename) => {
             console.log('Custom node file changed:', filename)
