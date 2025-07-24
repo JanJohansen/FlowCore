@@ -8,7 +8,8 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			"@": path.resolve(__dirname, "./src/"),
-			"@webapp/common": path.resolve(__dirname, "../common/src/index.ts"),
+			"@webapp/backend": path.resolve(__dirname, "../backend/src/core/coreDB/client/index.ts"),
+			"@webapp/backend/types": path.resolve(__dirname, "../backend/src/types.ts"),
 			"@webapp/extensions": path.resolve(__dirname, "../extensions/")
 		}
 	},

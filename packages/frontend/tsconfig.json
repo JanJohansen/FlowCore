@@ -17,8 +17,8 @@
 		"noFallthroughCasesInSwitch": true,
 		"paths": {
 			"@/*": ["./src/*"],
-			"@webapp/common": ["../common/src/index.ts"],
-			"@webapp/backend": ["../backend/src/index.ts"],
+			"@webapp/backend": ["../backend/src/core/coreDB/client/index.ts"],
+			"@webapp/backend/types": ["../backend/src/types.ts"],
 			"@webapp/backend/*": ["../backend/src/*"],
 			"@webapp/extensions/*": ["../extensions/*"]
 		},

@@ -19,9 +19,8 @@ extensible node system. Built with TypeScript, Vue 3, Express, and a custom reac
 
 ### Package Structure (pnpm workspace)
 
--   `@webapp/backend`: Express server with CoreDB, FlowCore, and MQTT
+-   `@webapp/backend`: Express server with CoreDB, FlowCore, MQTT, and shared client
 -   `@webapp/frontend`: Vue 3 SPA with flow designer and dashboards
--   `@webapp/common`: Shared types and CoreDB client
 -   `extensions`: Standalone Vue app for extension development
 
 ## Development Workflows
@@ -126,9 +125,10 @@ Z2M class handles Zigbee2MQTT communication:
 
 ### Import Patterns
 
--   Use workspace imports: `@webapp/common`, `@webapp/backend`
+-   Use workspace imports: `@webapp/backend`, `@webapp/backend/types`
 -   ES modules throughout (`"type": "module"` in package.json)
 -   Relative imports for local files
+-   Frontend imports CoreDB client from `@webapp/backend`
 
 ### TypeScript Configuration
 

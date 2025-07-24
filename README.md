@@ -104,16 +104,6 @@ pnpm start
 -   **Port**: 5173
 -   **Build**: Vite with hot module replacement
 
-### Common (`@webapp/common`)
-
--   **Shared Code**: Types, utilities, CoreDB client, constants
--   **Exports**:
-    -   `CoreDBClient` - WebSocket and TCP transport clients
-    -   `NodeBackendBaseV1` - Base class for custom flow nodes
-    -   Shared TypeScript interfaces (`IFlowModel`, `IFlowNodeModel`, etc.)
-    -   Utility functions (`generateId`, `deepMerge`, `formatTimestamp`)
-    -   Application constants and configuration
-
 ## 🔧 Available Scripts
 
 ### Root Level
@@ -149,16 +139,13 @@ The common package provides shared functionality across frontend and backend:
 
 ```typescript
 // Import CoreDB client
-import { CoreDBClient, CoreDBWSTransport } from "@webapp/common"
+import { CoreDBClient, CoreDBWSTransport } from "@webapp/backend"
 
 // Import shared types
-import { IFlowModel, IFlowNodeModel } from "@webapp/common"
+import { IFlowModel, IFlowNodeModel } from "@webapp/backend/types"
 
-// Import utilities
-import { generateId, deepMerge, formatTimestamp } from "@webapp/common"
-
-// Import constants
-import { DEFAULT_CONFIG, API_CONFIG } from "@webapp/common"
+// Import backend base classes
+import { NodeBackendBaseV1 } from "@webapp/backend"
 ```
 
 ### Example Usage
@@ -168,9 +155,14 @@ import { DEFAULT_CONFIG, API_CONFIG } from "@webapp/common"
 const transport = new CoreDBWSTransport("ws://localhost:3000")
 const client = new CoreDBClient(transport)
 
-// Use shared utilities
-const flowId = generateId("flow")
-const config = deepMerge(baseConfig, overrides)
+// Create custom node
+class MyNode extends NodeBackendBaseV1 {
+	setup() {
+		this.ins.on("input", (value) => {
+			this.outs.set("output", value * 2)
+		})
+	}
+}
 ```
 
 ## 🏛️ Architecture

@@ -1,4 +1,4 @@
-import { IBackendBaseNodeContext } from '@webapp/common'
+import { IBackendBaseNodeContext } from '../../types'
 import { CoreDB, CoreDBUser } from '../coreDB/CoreDB'
 
 export class NodeBackendBaseV1 {
@@ -32,4 +32,11 @@ export class NodeBackendBaseV1 {
     // Optional lifecycle methods that can be overridden by subclasses
     setup?(): void
     cleanup?(): void
+
+    // Internal cleanup method called by the system
+    _baseCleanup(): void {
+        if (this.cleanup) {
+            this.cleanup()
+        }
+    }
 }

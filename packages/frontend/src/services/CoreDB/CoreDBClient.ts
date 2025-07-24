@@ -1,4 +1,4 @@
-import { CoreDBTransport, CoreDBMessage, PendingResponse } from '@webapp/common'
+import { CoreDBTransport, CoreDBMessage, PendingResponse } from '@webapp/backend'
 
 export class CoreDBClient {
     private messageId = 0;

@@ -2,7 +2,7 @@ import { CoreDB, CoreDBUser } from '../coreDB/CoreDB'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'url'
-import { IFlowModel, IFlowNodeModel, IBackendBaseNodeContext } from '@webapp/common'
+import { IFlowModel, IFlowNodeModel, IBackendBaseNodeContext } from '../../types'
 import { NodeBackendBaseV1 } from "./NodeBackendBaseV1"
 
 

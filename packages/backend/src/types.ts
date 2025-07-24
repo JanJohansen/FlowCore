@@ -1,5 +1,5 @@
 // Re-export all types from CoreDBClient
-export * from './CoreDBClient/types'
+export * from './core/coreDB/client/types'
 
 // Common shared types that can be used across frontend and backend
 export interface AppConfig {

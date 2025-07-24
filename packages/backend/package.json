@@ -3,6 +3,22 @@
 	"version": "1.0.0",
 	"type": "module",
 	"private": true,
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		},
+		"./client": {
+			"types": "./dist/core/coreDB/client/index.d.ts",
+			"import": "./dist/core/coreDB/client/index.js"
+		},
+		"./types": {
+			"types": "./dist/types.d.ts",
+			"import": "./dist/types.js"
+		}
+	},
 	"scripts": {
 		"dev": "tsx watch --clear-screen=false src/index.ts",
 		"build": "tsc",
@@ -13,7 +29,6 @@
 		"clean": "rm -rf dist node_modules"
 	},
 	"dependencies": {
-		"@webapp/common": "workspace:*",
 		"cors": "^2.8.5",
 		"express": "^4.18.2",
 		"mqtt": "^5.3.3",
