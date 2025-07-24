@@ -7,14 +7,23 @@ packages
     extensions
         MyUserExtension         // (User provided) extension library
             frontend
+                src
+                    nodes
+                        nodeX
+                            backend.ts
                 index.ts        // Exports _paths_ to VUE components, pages, ++
                 package.json
                 ...
             backend             // NodeJS project with core nodes.
                 index.ts        // Exports paths to backend classes for nodes, ++?
                 package.json
-                ...
+                src
+                    nodes
+                        nodeX
+                            definition.ts
+                            visual.vue
 
+                ...
 ```
 
 How to start new extansion development:

@@ -6,21 +6,44 @@ export const extensionInfo = {
     version: "1.0.0",
     nodeComponents: {
         testNodeUI: {
-            path: path.resolve(__dirname, "./src/components/testNodeUI.vue"),
+            componentPath: path.resolve(__dirname, "./src/components/testNodeUI.vue"),
+        },
+        ticker: {
+            typeName: "Ticker",
+            typeUID: "com.flow.ticker",
+            icon: "mdi:timer",
+            category: "Timing",
+            version: "1.0.0",
+            author: "Jan Johansen",
+            description: "A node that generates ticks at a specified interval.",
+            company: "JJ inc.",
+            license: "MIT",
+            ins: {
+                "interval": {
+                    "valueType": "number",
+                    "description": "Interval in milliseconds between ticks."
+                }
+            },
+            outs: {
+                "tick": {
+                    "valueType": "number",
+                    "description": "Tick output = increasing numerical counter."
+                }
+            },
+            componentPath: path.resolve(__dirname, "./src/components/TickerNodeUI.vue"),
         }
     },
     dashComponent: {
         testDashUI: {
-            path: path.resolve(__dirname, "./src/components/testDashUI.vue"),
+            componentPath: path.resolve(__dirname, "./src/components/testDashUI.vue"),
         }
     },
     pages: {
         testPage: {
-            path: path.resolve(__dirname, "./src/pages/testPage.vue"),
+            componentPath: path.resolve(__dirname, "./src/pages/testPage.vue"),
             title: "Test Page",
             description: "A simple test page for the extension.",
             icon: "mdi:home",
         }
     }
 }
-
