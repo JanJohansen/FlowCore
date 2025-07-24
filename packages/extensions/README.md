@@ -17,15 +17,6 @@ packages
 
 ```
 
-```
-vue/index.ts
-
-nodesUIs = ...
-export paths = {nodeUIs: nodeUIs}
-
-
-```
-
 How to start new extansion development:
 
 ```
