@@ -9,7 +9,7 @@ export default defineConfig({
 		alias: {
 			"@": path.resolve(__dirname, "./src/"),
 			"@webapp/common": path.resolve(__dirname, "../common/src/index.ts"),
-			"@webapp/extensions": path.resolve(__dirname, "../extensions/src/components/extensions/")
+			"@webapp/extensions": path.resolve(__dirname, "../extensions/")
 		}
 	},
 	server: {

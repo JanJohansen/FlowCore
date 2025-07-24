@@ -20,7 +20,7 @@
 			"@webapp/common": ["../common/src/index.ts"],
 			"@webapp/backend": ["../backend/src/index.ts"],
 			"@webapp/backend/*": ["../backend/src/*"],
-			"@webapp/extensions/*": ["../extensions/src/components/extensions/*"]
+			"@webapp/extensions/*": ["../extensions/*"]
 		},
 		"baseUrl": "."
 	},

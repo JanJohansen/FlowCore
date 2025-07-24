@@ -41,7 +41,7 @@ cd ..
 mkdir backend
 cd backend
 
-node init   // Create nodejs ts project
+npm init   // Create nodejs ts project
 ```
 
 ## NODES
