@@ -44,12 +44,6 @@ export const useFlowStore = defineStore('flowStore', () => {
         endPoint: { x: 0, y: 0 }
     })
 
-    // ===== Edit State =====
-    const editState = reactive({
-        isEditModalVisible: false,
-        editingNodeId: ''
-    })
-
     // ===== Node Port Positions =====
     const nodePortPositions = ref(
         new Map<
@@ -226,17 +220,6 @@ export const useFlowStore = defineStore('flowStore', () => {
         connectionState.startPoint = null
     }
 
-    // ===== Edit Methods =====
-    const openNodeEditor = (nodeId: string) => {
-        editState.editingNodeId = nodeId
-        editState.isEditModalVisible = true
-    }
-
-    const closeNodeEditor = () => {
-        editState.isEditModalVisible = false
-        editState.editingNodeId = ''
-    }
-
     // ************************************************************************
     // Node Registry Methods
     // ************************************************************************
@@ -254,11 +237,11 @@ export const useFlowStore = defineStore('flowStore', () => {
                     nodeDefinitions[def.typeUID] = def
 
                     // Also load and store the component for this node type
-                    // const component = await loadNodeComponent(nodePath)
-                    // if (component) {
-                    //     nodeComponents[def.typeUID] = markRaw(component)
-                    //     console.log(`Loaded component for node: ${def.typeUID} from ${nodePath}`)
-                    // }
+                    const component = await loadNodeComponent(nodePath)
+                    if (component) {
+                        nodeComponents[def.typeUID] = markRaw(component)
+                        console.log(`Loaded component for node: ${def.typeUID} from ${nodePath}`)
+                    }
 
                     console.log(`Loaded definition for node: ${def.typeUID} v.${def.version} @ ${nodePath}`, def)
                 }
@@ -343,6 +326,8 @@ export const useFlowStore = defineStore('flowStore', () => {
 
     // Enhanced getNodeDefinition function that can handle both node IDs and typeUIDs
     const getNodeDefinition = (nodeIdOrType: string): INodeDefinition | undefined => {
+        console.log(`Getting node definition for: ${nodeIdOrType}`)
+
         // First, check if this is a direct typeUID
         if (nodeDefinitions[nodeIdOrType]) {
             return nodeDefinitions[nodeIdOrType]
@@ -549,10 +534,8 @@ export const useFlowStore = defineStore('flowStore', () => {
         flowState,
         availableNodes,
         nodeComponents,
-        nodeDefinitions,
         selectedFlowId,
         connectionState,
-        editState,
         nodePortPositions,
 
         // Flow State Methods
@@ -570,28 +553,17 @@ export const useFlowStore = defineStore('flowStore', () => {
         endConnection,
         cancelConnection,
 
-        // Edit Methods
-        openNodeEditor,
-        closeNodeEditor,
-
         // Node Registry Methods
-        loadNodeDefinitions,
         getNodeDefinition,
-        getNodeComponent,
-        loadNodeComponent,
-        loadNodeDefinition,
 
         // Flow Tree Methods
         setSelectedFlow,
         addFlow,
         deleteFlow,
-        createFolder,
-        deleteFolder,
         addFolder,
 
         // Node Port Position Methods
         updateNodePortPositions,
-        updateConnectionPaths,
         triggerPortPositionUpdate,
 
         // Node Input Methods
