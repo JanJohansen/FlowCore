@@ -240,7 +240,7 @@
 		const targetNodePorts = nodePortPositions.value.get(connection.targetNodeId)
 
 		if (!sourceNodePorts || !targetNodePorts) {
-			console.warn("Missing port positions for connection:", connection)
+			console.warn("Missing port positions for connection:") //, connection)
 			return "M0,0 C0,0 0,0 0,0" // Empty path if positions not available
 		}
 
@@ -249,7 +249,7 @@
 		const targetNodeDef = flowStore.getNodeDefinition(connection.targetNodeId)
 
 		if (!sourceNodeDef || !targetNodeDef) {
-			console.warn("Missing node definitions for connection:", connection)
+			console.warn("Missing node definitions for connection:") //, connection)
 			return "M0,0 C0,0 0,0 0,0"
 		}
 
@@ -260,13 +260,6 @@
 		// Get input keys for target node
 		const inputKeys = Object.keys(targetNodeDef.ins || {})
 		const targetPortIndex = inputKeys.indexOf(connection.targetPortId)
-
-		// Debug connection info in development
-		if (import.meta.env.DEV) {
-			console.log("Connection:", connection)
-			console.log("Source port:", connection.sourcePortId, "index:", sourcePortIndex, "in keys:", outputKeys)
-			console.log("Target port:", connection.targetPortId, "index:", targetPortIndex, "in keys:", inputKeys)
-		}
 
 		if (sourcePortIndex === -1 || targetPortIndex === -1) {
 			console.warn(
@@ -397,20 +390,6 @@
 		gridSize: GRID_SIZE,
 		svgElement
 	})
-
-	// Debug logging for development (remove in production)
-	if (import.meta.env.DEV) {
-		watchEffect(() => {
-			console.log("Node component map:", Object.keys(nodeComponentMap.value))
-			console.log("Flow store node components:", Object.keys(flowStore.nodeComponents))
-
-			// Log which component is being used for each node
-			flowStore.flowState.nodes.forEach((node) => {
-				const component = nodeComponentMap.value[node.typeUID] || DefaultNode
-				console.log(`Node ${node.id} (${node.typeUID}) using component:`, component.name || "Unknown")
-			})
-		})
-	}
 </script>
 
 <style scoped>

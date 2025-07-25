@@ -240,6 +240,37 @@ export const useFlowStore = defineStore('flowStore', () => {
     // ************************************************************************
     // Node Registry Methods
     // ************************************************************************
+
+
+
+
+    const loadNodeDefinitions = async (customNodePaths: string[]) => {
+        console.log("Loading node definitions from paths:", customNodePaths)
+
+        const definitions = await Promise.all(
+            customNodePaths.map(async (nodePath) => {
+                const def = await loadNodeDefinition(nodePath)
+                if (def) {
+                    nodeDefinitions[def.typeUID] = def
+
+                    // Also load and store the component for this node type
+                    // const component = await loadNodeComponent(nodePath)
+                    // if (component) {
+                    //     nodeComponents[def.typeUID] = markRaw(component)
+                    //     console.log(`Loaded component for node: ${def.typeUID} from ${nodePath}`)
+                    // }
+
+                    console.log(`Loaded definition for node: ${def.typeUID} v.${def.version} @ ${nodePath}`, def)
+                }
+                return def
+            })
+        )
+
+        availableNodes.value = definitions.filter(Boolean) as INodeDefinition[]
+        console.log("Available nodes:", availableNodes.value)
+        console.log("Node components:", Object.keys(nodeComponents))
+    }
+
     const loadNodeDefinition = async (nodePath: string): Promise<INodeDefinition | null> => {
         try {
             // Change from @/components/Flow/CustomNodes to relative path
@@ -262,34 +293,9 @@ export const useFlowStore = defineStore('flowStore', () => {
         }
     }
 
-    const loadNodeDefinitions = async (customNodePaths: string[]) => {
-        console.log("Loading node definitions from paths:", customNodePaths)
-
-        const definitions = await Promise.all(
-            customNodePaths.map(async (nodePath) => {
-                const def = await loadNodeDefinition(nodePath)
-                if (def) {
-                    nodeDefinitions[def.typeUID] = def
-
-                    // Also load and store the component for this node type
-                    const component = await loadNodeComponent(nodePath)
-                    if (component) {
-                        nodeComponents[def.typeUID] = markRaw(component)
-                        console.log(`Loaded component for node: ${def.typeUID} from ${nodePath}`)
-                    }
-
-                    console.log(`Loaded definition for node: ${def.typeUID} v.${def.version} @ ${nodePath}`, def)
-                }
-                return def
-            })
-        )
-
-        availableNodes.value = definitions.filter(Boolean) as INodeDefinition[]
-        console.log("Available nodes:", availableNodes.value)
-        console.log("Node components:", Object.keys(nodeComponents))
-    }
-
     const getNodeComponent = async (nodeType: string) => {
+        console.log(`Getting component for node type: ${nodeType}`)
+
         if (nodeComponents[nodeType]) {
             return nodeComponents[nodeType]
         }
@@ -312,7 +318,7 @@ export const useFlowStore = defineStore('flowStore', () => {
         console.log(`Loading component for node type ${nodeType} from folder ${folderName}`)
         const component = await loadNodeComponent(folderName)
         if (component) {
-            nodeComponents[nodeType] = component
+            nodeComponents[nodeType] = markRaw(component)
             console.log(`Successfully loaded component for ${nodeType}`)
         } else {
             console.error(`Failed to load component for ${nodeType}`)
@@ -432,7 +438,7 @@ export const useFlowStore = defineStore('flowStore', () => {
             outputs: Array<{ index: number; x: number; y: number }>
         }
     }) => {
-        console.log(`Setting port positions for node ${data.nodeId}:`, data.ports)
+        // console.log(`Setting port positions for node ${data.nodeId}:`, data.ports)
         nodePortPositions.value.set(data.nodeId, data.ports)
         updateConnectionPaths()
     }
@@ -483,8 +489,8 @@ export const useFlowStore = defineStore('flowStore', () => {
     // ===== Initialize =====
     // Initialize CoreDB connection
     const db = useCoreDBStore().getWrapper()
-    db.onPatch("customNodes", (val) => {
-        console.log("Received customNodes patch:", val)
+    db.onPatch("customNodePaths", (val) => {
+        console.log("Received customNodePaths patch:", val)
         loadNodeDefinitions(val)
     })
 

@@ -65,7 +65,7 @@ export class FlowCore {
 
             // Publish the list of custom node folders to DB
             // FIXME: Use typeName instead of folder name!!!
-            this.db.set('customNodes', folderArray)
+            this.db.set('customNodePaths', folderArray)
             console.log('Custom nodes:', folders, customNodesPath)
 
             for (const folder of folders) {

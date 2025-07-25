@@ -374,7 +374,7 @@
 			})
 
 			// Log for debugging
-			console.log(`Updating port positions for node ${nodeId.value}:`, { inputs, outputs })
+			// console.log(`Updating port positions for node ${nodeId.value}:`, { inputs, outputs })
 
 			// Update the port positions in the store
 			flowStore.updateNodePortPositions({
