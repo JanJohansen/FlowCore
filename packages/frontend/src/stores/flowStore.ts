@@ -18,21 +18,6 @@ function createID(): string {
     return `id_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`
 }
 
-function getNodeFolderByTypeUID(typeUID: string): string | null {
-    // Map typeUID to folder name - this should match your actual folder structure
-    const typeToFolderMap: Record<string, string> = {
-        'com.flow.function': 'Function',
-        'com.flow.math': 'MathNode',
-        'com.flow.input': 'InputNode',
-        'com.flow.output': 'OutputNode',
-        'com.flow.button': 'Button',
-        'com.flow.ticker': 'Ticker',
-        'com.flow.Z2MObject': 'ObjectNode'
-    }
-
-    return typeToFolderMap[typeUID] || null
-}
-
 export const useFlowStore = defineStore('flowStore', () => {
     // ===== Flow State =====
     let flowState = reactive<IFlowModel>({
@@ -253,7 +238,9 @@ export const useFlowStore = defineStore('flowStore', () => {
         editState.editingNodeId = ''
     }
 
-    // ===== Node Registry Methods =====
+    // ************************************************************************
+    // Node Registry Methods
+    // ************************************************************************
     const loadNodeDefinition = async (nodePath: string): Promise<INodeDefinition | null> => {
         try {
             // Change from @/components/Flow/CustomNodes to relative path
@@ -334,6 +321,21 @@ export const useFlowStore = defineStore('flowStore', () => {
         return component
     }
 
+    function getNodeFolderByTypeUID(typeUID: string): string | null {
+        // Map typeUID to folder name - this should match your actual folder structure
+        const typeToFolderMap: Record<string, string> = {
+            'com.flow.function': 'Function',
+            'com.flow.math': 'MathNode',
+            'com.flow.input': 'InputNode',
+            'com.flow.output': 'OutputNode',
+            'com.flow.button': 'Button',
+            'com.flow.ticker': 'Ticker',
+            'com.flow.Z2MObject': 'ObjectNode'
+        }
+
+        return typeToFolderMap[typeUID] || null
+    }
+
     // Enhanced getNodeDefinition function that can handle both node IDs and typeUIDs
     const getNodeDefinition = (nodeIdOrType: string): INodeDefinition | undefined => {
         // First, check if this is a direct typeUID
@@ -351,7 +353,9 @@ export const useFlowStore = defineStore('flowStore', () => {
         return undefined
     }
 
+    // ************************************************************************
     // ===== Flow Tree Methods =====
+    // ************************************************************************
     const setSelectedFlow = (flowId: string) => {
         selectedFlowId.value = flowId
         // Load the selected flow data into flowState

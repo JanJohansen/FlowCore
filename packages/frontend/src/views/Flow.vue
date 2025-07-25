@@ -40,7 +40,7 @@
 	import FlowNodeTree from "../components/Flow/FlowNodeTree.vue"
 	import FlowsTree from "../components/Flow/FlowsTree.vue"
 
-	import testNodeUI from "@webapp/extensions/dk.johansenweb.core/frontend/src/components/testNodeUI.vue"
+	// import testNodeUI from "@webapp/extensions/dk.johansenweb.core/frontend/src/components/testNodeUI.vue"
 
 	const flowStore = useFlowStore()
 

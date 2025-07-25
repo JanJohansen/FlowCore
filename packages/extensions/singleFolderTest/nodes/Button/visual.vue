@@ -6,7 +6,7 @@
 				@pointerdown.self.stop="handlePointerDown"
 				@pointerup.self.stop="handlePointerUp"
 			>
-				Button@front
+				Button-2-!
 			</button>
 		</template>
 	</flow-node-base>

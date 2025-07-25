@@ -8,7 +8,9 @@ import { NodeBackendBaseV1 } from "./NodeBackendBaseV1"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const CUSTOM_NODES_FOLDER = path.resolve(__dirname, "../../../../frontend/src/components/Flow/CustomNodes")
+// const CUSTOM_NODES_FOLDER = path.resolve(__dirname, "../../../../frontend/src/components/Flow/CustomNodes")
+// const CUSTOM_NODES_FOLDER = path.resolve(__dirname, "../../../../extensions/dk.johansenweb.core/singleFolderTest/nodes")
+const CUSTOM_NODES_FOLDER = path.resolve(__dirname, "../../../../extensions/singleFolderTest/nodes")
 
 let nodeDefinitions: { [typeUID: string]: any } = {}
 let nodeClasses: { [typeUID: string]: any } = {}
@@ -29,27 +31,27 @@ export class FlowCore {
             await this.loadCustomNodes()
         })
 
-        this.db.onCall("flowCore:saveCustomNodeFile", async (path: string, content: string) => {
-            const targetPath = CUSTOM_NODES_FOLDER + "." + path
-            console.log("Saving to:", targetPath)
-            await fs.promises.mkdir(targetPath, { recursive: true })
-            await fs.promises.writeFile(targetPath, content)
-        })
+        // this.db.onCall("flowCore:saveCustomNodeFile", async (path: string, content: string) => {
+        //     const targetPath = CUSTOM_NODES_FOLDER + "." + path
+        //     console.log("Saving to:", targetPath)
+        //     await fs.promises.mkdir(targetPath, { recursive: true })
+        //     await fs.promises.writeFile(targetPath, content)
+        // })
 
-        this.db.onCall("flowCore:loadCustomNodeFile", async (path: string) => {
-            const targetPath = CUSTOM_NODES_FOLDER + "." + path
-            fs.readFile(targetPath, (err, data) => {
-                if (err) return null
-                return data.toString()
-            })
-        })
+        // this.db.onCall("flowCore:loadCustomNodeFile", async (path: string) => {
+        //     const targetPath = CUSTOM_NODES_FOLDER + "." + path
+        //     fs.readFile(targetPath, (err, data) => {
+        //         if (err) return null
+        //         return data.toString()
+        //     })
+        // })
 
-        this.db.onCall("flowCore:deleteCustomNodeFile", (path: string) => {
-            const targetPath = CUSTOM_NODES_FOLDER + "." + path
-            fs.rm(targetPath, (err) => {
-                if (err) throw err
-            })
-        })
+        // this.db.onCall("flowCore:deleteCustomNodeFile", (path: string) => {
+        //     const targetPath = CUSTOM_NODES_FOLDER + "." + path
+        //     fs.rm(targetPath, (err) => {
+        //         if (err) throw err
+        //     })
+        // })
 
         this.monitorFlows()
     }
@@ -62,6 +64,7 @@ export class FlowCore {
             const folderArray = folders.map(dirent => dirent.name)
 
             // Publish the list of custom node folders to DB
+            // FIXME: Use typeName instead of folder name!!!
             this.db.set('customNodes', folderArray)
             console.log('Custom nodes:', folders, customNodesPath)
 
