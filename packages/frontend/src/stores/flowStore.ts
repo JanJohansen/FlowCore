@@ -34,7 +34,6 @@ export const useFlowStore = defineStore('flowStore', () => {
     const availableNodes = ref<INodeDefinition[]>([])
     const nodeComponents = reactive<Record<string, any>>({})
     const nodeDefinitions = reactive<INodeDefinitions>({})
-    const customNodePaths = ref<string[]>([])
 
     const selectedFlowId = ref<string | null>(null)
 
@@ -263,11 +262,11 @@ export const useFlowStore = defineStore('flowStore', () => {
         }
     }
 
-    const loadNodeDefinitions = async () => {
-        console.log("Loading node definitions from paths:", customNodePaths.value)
+    const loadNodeDefinitions = async (customNodePaths: string[]) => {
+        console.log("Loading node definitions from paths:", customNodePaths)
 
         const definitions = await Promise.all(
-            customNodePaths.value.map(async (nodePath) => {
+            customNodePaths.map(async (nodePath) => {
                 const def = await loadNodeDefinition(nodePath)
                 if (def) {
                     nodeDefinitions[def.typeUID] = def
@@ -486,16 +485,9 @@ export const useFlowStore = defineStore('flowStore', () => {
     const db = useCoreDBStore().getWrapper()
     db.onPatch("customNodes", (val) => {
         console.log("Received customNodes patch:", val)
-        customNodePaths.value = val
+        loadNodeDefinitions(val)
     })
 
-    // Add watchEffect to reload nodes when customNodePaths changes
-    watchEffect(() => {
-        if (customNodePaths.value && customNodePaths.value.length > 0) {
-            console.log("customNodePaths changed, reloading definitions:", customNodePaths.value)
-            loadNodeDefinitions()
-        }
-    })
 
     // get flows: IFlows
     const flows = reactive<Record<string, IFlowModel>>({})
@@ -552,7 +544,6 @@ export const useFlowStore = defineStore('flowStore', () => {
         availableNodes,
         nodeComponents,
         nodeDefinitions,
-        customNodePaths,
         selectedFlowId,
         connectionState,
         editState,
