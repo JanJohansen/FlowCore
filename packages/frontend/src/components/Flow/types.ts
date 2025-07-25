@@ -17,10 +17,6 @@ export interface IFlowTreeModel {
 }
 
 // ---------------------------------------------------------------------------
-export interface INodeDefinitions {
-    [typeUID: string]: INodeDefinition
-}
-
 export interface INodeDefinition {
     typeUID: string
     version: string

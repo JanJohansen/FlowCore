@@ -41,7 +41,7 @@
 					<component
 						v-for="node in flowStore.flowState.nodes"
 						:key="node.id"
-						:is="nodeComponentMap[node.typeUID] || DefaultNode"
+						:is="flowStore.getNodeComponent(node.typeUID) || DefaultNode"
 						:context="{
 							node: { id: node.id },
 							nodeDefinition: flowStore.getNodeDefinition(node.typeUID),
@@ -80,11 +80,6 @@
 
 	// Add this line to reference the nodePortPositions from the flowStore
 	const nodePortPositions = computed(() => flowStore.nodePortPositions)
-
-	// Node component mapping
-	const nodeComponentMap = computed(() => {
-		return flowStore.nodeComponents || {}
-	})
 
 	// Save node input values
 	function handleNodeInputSave(nodeId: string, inputValues: Record<string, any>) {

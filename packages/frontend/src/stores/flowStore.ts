@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, reactive, markRaw, watchEffect } from 'vue'
+import { ref, reactive, markRaw } from 'vue'
 import {
     NODE_WIDTH
 } from '../components/Flow/constants'
@@ -8,7 +8,6 @@ import type {
     IFlowNodeModel,
     IFlowConnection,
     INodeDefinition,
-    INodeDefinitions,
     ConnectionPoint
 } from '../components/Flow/types'
 import { useCoreDBStore } from '../services/CoreDB/CoreDBStore'
@@ -32,8 +31,9 @@ export const useFlowStore = defineStore('flowStore', () => {
 
     // ===== Node Registry =====
     const availableNodes = ref<INodeDefinition[]>([])
-    const nodeComponents = reactive<Record<string, any>>({})
-    const nodeDefinitions = reactive<INodeDefinitions>({})
+    const nodeComponents: { [nodeTypeId: string]: any } = {}
+    const nodeDefinitions = reactive<{ [nodeTypeUID: string]: INodeDefinition }>({})
+    const nodeTypeToFolderMap = reactive<{ [typeUID: string]: string }>({})
 
     const selectedFlowId = ref<string | null>(null)
 
@@ -84,12 +84,8 @@ export const useFlowStore = defineStore('flowStore', () => {
     const createNode = async (typeUID: string, position: { x: number, y: number }): Promise<IFlowNodeModel> => {
         // Load the component for this node type if not already loaded
         if (!nodeComponents[typeUID]) {
-            const component = await getNodeComponent(typeUID)
-            if (component) {
-                nodeComponents[typeUID] = component
-            }
+            await loadNodeComponentAsync(typeUID)
         }
-
 
         const newNode: IFlowNodeModel = {
             id: `${typeUID}_${Date.now()}`,
@@ -224,26 +220,25 @@ export const useFlowStore = defineStore('flowStore', () => {
     // Node Registry Methods
     // ************************************************************************
 
-
-
-
-    const loadNodeDefinitions = async (customNodePaths: string[]) => {
-        console.log("Loading node definitions from paths:", customNodePaths)
+    const loadNodes = async (customNodeFolders: string[]) => {
+        console.log("Loading node definitions from paths:", customNodeFolders)
 
         const definitions = await Promise.all(
-            customNodePaths.map(async (nodePath) => {
-                const def = await loadNodeDefinition(nodePath)
+            customNodeFolders.map(async (nodeFolder) => {
+                const def = await loadNodeDefinition(nodeFolder)
                 if (def) {
                     nodeDefinitions[def.typeUID] = def
+                    // Build the dynamic mapping from typeUID to folder
+                    nodeTypeToFolderMap[def.typeUID] = nodeFolder
 
                     // Also load and store the component for this node type
-                    const component = await loadNodeComponent(nodePath)
+                    const component = await loadNodeComponent(nodeFolder)
                     if (component) {
                         nodeComponents[def.typeUID] = markRaw(component)
-                        console.log(`Loaded component for node: ${def.typeUID} from ${nodePath}`)
+                        console.log(`Loaded component for node: ${def.typeUID} from ${nodeFolder}`, nodeComponents)
                     }
 
-                    console.log(`Loaded definition for node: ${def.typeUID} v.${def.version} @ ${nodePath}`, def)
+                    console.log(`Loaded definition for node: ${def.typeUID} v.${def.version} @ ${nodeFolder}`, def)
                 }
                 return def
             })
@@ -251,7 +246,8 @@ export const useFlowStore = defineStore('flowStore', () => {
 
         availableNodes.value = definitions.filter(Boolean) as INodeDefinition[]
         console.log("Available nodes:", availableNodes.value)
-        console.log("Node components:", Object.keys(nodeComponents))
+        console.log("Node components:", nodeComponents)
+        console.log("Node type to folder map:", nodeTypeToFolderMap)
     }
 
     const loadNodeDefinition = async (nodePath: string): Promise<INodeDefinition | null> => {
@@ -265,37 +261,56 @@ export const useFlowStore = defineStore('flowStore', () => {
         }
     }
 
-    const loadNodeComponent = async (nodePath: string) => {
+    const loadNodeComponent = async (nodeFolder: string) => {
+        console.log(`Loading node component from path: ${nodeFolder}`)
         try {
             // Change from @/components/Flow/CustomNodes to relative path
-            const visualModule = await import(/* @vite-ignore */ `../components/Flow/CustomNodes/${nodePath}/visual.vue`)
+            const visualModule = await import(/* @vite-ignore */ `../components/Flow/CustomNodes/${nodeFolder}/visual.vue`)
             return markRaw(visualModule.default)
+
+            // return defineAsyncComponent(() => import(/* @vite-ignore */ `../components/Flow/CustomNodes/${nodeFolder}/visual.vue`))
+
         } catch (error) {
-            console.warn(`Failed to load component from path: ${nodePath}`, error)
+            console.warn(`Failed to load component from path: ${nodeFolder}`, error)
             return null
         }
     }
 
-    const getNodeComponent = async (nodeType: string) => {
+    const getNodeComponent = (nodeType: string) => {
         console.log(`Getting component for node type: ${nodeType}`)
 
         if (nodeComponents[nodeType]) {
+            console.log(`Component for node type ${nodeType} already loaded`)
             return nodeComponents[nodeType]
         }
+
+        // If component is not loaded, trigger async loading but return null for now
+        loadNodeComponentAsync(nodeType)
+        return null
+    }
+
+    const loadNodeComponentAsync = async (nodeType: string) => {
+        // Prevent multiple simultaneous loads of the same component
+        if (nodeComponents[`loading_${nodeType}`]) {
+            return
+        }
+        nodeComponents[`loading_${nodeType}`] = true
 
         // Find the correct folder path for this node type
         const nodeDef = nodeDefinitions[nodeType]
         if (!nodeDef) {
             console.warn(`No definition found for node type: ${nodeType}`)
-            return null
+            delete nodeComponents[`loading_${nodeType}`]
+            return
         }
 
-        // Get the folder name using the mapping function
-        const folderName = getNodeFolderByTypeUID(nodeType)
+        // Get the folder name from the dynamic mapping
+        const folderName = nodeTypeToFolderMap[nodeType]
 
         if (!folderName) {
             console.warn(`No folder mapping found for node type: ${nodeType}`)
-            return null
+            delete nodeComponents[`loading_${nodeType}`]
+            return
         }
 
         console.log(`Loading component for node type ${nodeType} from folder ${folderName}`)
@@ -306,22 +321,7 @@ export const useFlowStore = defineStore('flowStore', () => {
         } else {
             console.error(`Failed to load component for ${nodeType}`)
         }
-        return component
-    }
-
-    function getNodeFolderByTypeUID(typeUID: string): string | null {
-        // Map typeUID to folder name - this should match your actual folder structure
-        const typeToFolderMap: Record<string, string> = {
-            'com.flow.function': 'Function',
-            'com.flow.math': 'MathNode',
-            'com.flow.input': 'InputNode',
-            'com.flow.output': 'OutputNode',
-            'com.flow.button': 'Button',
-            'com.flow.ticker': 'Ticker',
-            'com.flow.Z2MObject': 'ObjectNode'
-        }
-
-        return typeToFolderMap[typeUID] || null
+        delete nodeComponents[`loading_${nodeType}`]
     }
 
     // Enhanced getNodeDefinition function that can handle both node IDs and typeUIDs
@@ -476,7 +476,7 @@ export const useFlowStore = defineStore('flowStore', () => {
     const db = useCoreDBStore().getWrapper()
     db.onPatch("customNodePaths", (val) => {
         console.log("Received customNodePaths patch:", val)
-        loadNodeDefinitions(val)
+        loadNodes(val)
     })
 
 
@@ -533,7 +533,6 @@ export const useFlowStore = defineStore('flowStore', () => {
         // State
         flowState,
         availableNodes,
-        nodeComponents,
         selectedFlowId,
         connectionState,
         nodePortPositions,
@@ -555,6 +554,8 @@ export const useFlowStore = defineStore('flowStore', () => {
 
         // Node Registry Methods
         getNodeDefinition,
+        getNodeComponent,
+        loadNodeComponentAsync,
 
         // Flow Tree Methods
         setSelectedFlow,
