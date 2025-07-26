@@ -9,11 +9,11 @@
 
 <script setup lang="ts">
 	import { ref } from "vue"
-	import { default as FlowNodeBase, ICustomeNodeContext } from "../../FlowNodeBase.vue"
+	import { default as FlowNodeBase, ICustomNodeContext } from "../../FlowNodeBase.vue"
 	import { IFlowNodeModel, INodeDefinition } from "../../types"
 
 	const props = defineProps<{
-		context: ICustomeNodeContext
+		context: ICustomNodeContext
 		node: IFlowNodeModel
 		nodeDefinition: INodeDefinition
 	}>()

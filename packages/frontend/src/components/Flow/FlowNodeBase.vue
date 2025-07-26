@@ -75,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-	export interface ICustomeNodeContext {
+	export interface ICustomNodeContext {
 		node: { id: string }
 		nodeDefinition: INodeDefinition
 		db: any
@@ -87,7 +87,7 @@
 	import PropertyEditor from "./PropertyEditor.vue"
 
 	interface Props {
-		context: ICustomeNodeContext
+		context: ICustomNodeContext
 		node: IFlowNodeModel
 		nodeDefinition: INodeDefinition
 	}

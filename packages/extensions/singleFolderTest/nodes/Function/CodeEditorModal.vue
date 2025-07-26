@@ -87,7 +87,7 @@
 
 <script setup lang="ts">
 	import { ref, computed, onMounted } from "vue"
-	import MonacoEditor from "../../../MonacoEditor.vue"
+	import { MonacoEditor } from "../../../frontend-types"
 
 	const props = defineProps<{
 		displayName: string

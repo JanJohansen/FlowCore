@@ -1,6 +1,7 @@
-import { INodeDefinition } from "../../types"
+// import { INodeDefinition } from "../../types"
 
-export const nodeDefinition: INodeDefinition = {
+// export const nodeDefinition: INodeDefinition = {
+export const nodeDefinition = {
     typeName: "Button",
     typeUID: "com.flow.button",
     category: "Basic",

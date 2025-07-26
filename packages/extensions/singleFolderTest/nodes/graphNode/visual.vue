@@ -9,12 +9,13 @@
 </template>
 
 <script setup lang="ts">
-	import { default as FlowNodeBase, ICustomeNodeContext } from "../../FlowNodeBase.vue"
 	import { ref, onMounted } from "vue"
+	import { FlowNodeBase } from "../../../frontend-types"
+	import type { ICustomNodeContext, IFlowNodeModel, INodeDefinition } from "../../../frontend-types"
 	import * as d3 from "d3"
 
 	const props = defineProps<{
-		context: ICustomeNodeContext
+		context: ICustomNodeContext
 	}>()
 
 	const chartRef = ref<HTMLElement | null>(null)

@@ -20,7 +20,9 @@
 			"@webapp/backend": ["../backend/src/core/coreDB/client/index.ts"],
 			"@webapp/backend/types": ["../backend/src/types.ts"],
 			"@webapp/backend/*": ["../backend/src/*"],
-			"@webapp/extensions/*": ["../extensions/*"]
+			"@webapp/extensions/*": ["../extensions/*"],
+			"@webapp/frontend/src/*": ["./src/*"],
+			"@webapp/frontend/*": ["./*"]
 		},
 		"baseUrl": "."
 	},

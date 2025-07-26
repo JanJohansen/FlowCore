@@ -8,10 +8,10 @@
 	// Default node if no custom visual is provided.
 	// Will load definition from file.
 
-	import { default as FlowNodeBase, ICustomeNodeContext } from "./FlowNodeBase.vue"
+	import { default as FlowNodeBase, ICustomNodeContext } from "./FlowNodeBase.vue"
 
 	const props = defineProps<{
-		context: ICustomeNodeContext
+		context: ICustomNodeContext
 	}>()
 </script>
 

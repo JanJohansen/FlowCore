@@ -250,13 +250,16 @@ export const useFlowStore = defineStore('flowStore', () => {
         console.log("Node type to folder map:", nodeTypeToFolderMap)
     }
 
-    const loadNodeDefinition = async (nodePath: string): Promise<INodeDefinition | null> => {
+    const loadNodeDefinition = async (nodeFolder: string): Promise<INodeDefinition | null> => {
         try {
             // Change from @/components/Flow/CustomNodes to relative path
-            const definitionModule = await import(/* @vite-ignore */ `../components/Flow/CustomNodes/${nodePath}/definition`)
+            // const definitionModule = await import(/* @vite-ignore */ `../components/Flow/CustomNodes/${nodePath}/definition`)
+            // const definitionModule = await import(/* @vite-ignore */ `../../../extensions/singleFolderTest/${nodeFolder}/definition`)
+            // const definitionModule = await import(/* @vite-ignore */ `@webapp/extensions/singleFolderTest/nodes/${nodeFolder}/definition.ts`)
+            const definitionModule = await import(`@webapp/extensions/singleFolderTest/nodes/${nodeFolder}/definition.ts`)
             return definitionModule.nodeDefinition
         } catch (error) {
-            console.warn(`Failed to load definition from path: ${nodePath}`, error)
+            console.warn(`Failed to load definition from path: ${nodeFolder}`, error)
             return null
         }
     }
@@ -265,7 +268,11 @@ export const useFlowStore = defineStore('flowStore', () => {
         console.log(`Loading node component from path: ${nodeFolder}`)
         try {
             // Change from @/components/Flow/CustomNodes to relative path
-            const visualModule = await import(/* @vite-ignore */ `../components/Flow/CustomNodes/${nodeFolder}/visual.vue`)
+            // const visualModule = await import(/* @vite-ignore */ `../components/Flow/CustomNodes/${nodeFolder}/visual.vue`)
+            // const visualModule = await import(/* @vite-ignore */ `../../../extensions/singleFolderTest/${nodeFolder}/visual.vue`)
+            // const visualModule = await import(/* @vite-ignore */ `@webapp/extensions/singleFolderTest/nodes/${nodeFolder}/visual.vue`)
+            const visualModule = await import(`@webapp/extensions/singleFolderTest/nodes/${nodeFolder}/visual.vue`)
+
             return markRaw(visualModule.default)
 
             // return defineAsyncComponent(() => import(/* @vite-ignore */ `../components/Flow/CustomNodes/${nodeFolder}/visual.vue`))

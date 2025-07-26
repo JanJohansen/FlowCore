@@ -28,13 +28,14 @@
 
 <script setup lang="ts">
 	import { ref, onMounted } from "vue"
-	import { default as FlowNodeBase, ICustomeNodeContext } from "../../FlowNodeBase.vue"
+	import { FlowNodeBase } from "../../../frontend-types"
+	import type { ICustomNodeContext, IFlowNodeModel, INodeDefinition } from "../../../frontend-types"
 	import CodeEditorModal from "./CodeEditorModal.vue"
-	import { IFlowNodeModel, INodeDefinition } from "../../types"
-	import { useFlowStore } from "../../../../stores/flowStore"
+
+	import { useFlowStore } from "@webapp/frontend/src/stores/flowStore"
 
 	const props = defineProps<{
-		context: ICustomeNodeContext
+		context: ICustomNodeContext
 		node: IFlowNodeModel
 		nodeDefinition: INodeDefinition
 	}>()

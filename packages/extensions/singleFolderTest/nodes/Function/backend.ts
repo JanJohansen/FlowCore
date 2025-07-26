@@ -1,4 +1,4 @@
-import { NodeBackendBaseV1 } from "../../backend_types"
+import { NodeBackendBaseV1 } from "../../../backend-types"
 
 export default class FunctionNode extends NodeBackendBaseV1 {
     nodeType = "Function"

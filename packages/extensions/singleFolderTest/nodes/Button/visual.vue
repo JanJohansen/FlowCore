@@ -6,24 +6,26 @@
 				@pointerdown.self.stop="handlePointerDown"
 				@pointerup.self.stop="handlePointerUp"
 			>
-				Button-2-!
+				TestButton
 			</button>
 		</template>
 	</flow-node-base>
 </template>
 
 <script setup lang="ts">
-	import { ref } from "vue"
-	import { default as FlowNodeBase, ICustomeNodeContext } from "../../FlowNodeBase.vue"
-	import { IFlowNodeModel, INodeDefinition } from "../../types"
+	import { FlowNodeBase, ICustomNodeContext, IFlowNodeModel, INodeDefinition } from "../../../frontend-types"
 
 	const props = defineProps<{
-		context: ICustomeNodeContext
-		node: IFlowNodeModel
-		nodeDefinition: INodeDefinition
+		context: ICustomNodeContext
 	}>()
 
-	// props.context.db.on(props.context.node.id + ".ins.pressed", (val: boolean) => {})
+	// FIXME: Test - remove!
+	props.context.nodeDefinition.ins!.runtimeInput = {
+		type: "boolean",
+		default: false
+	}
+
+	props.context.db.on(props.context.node.id + ".ins.pressed", (val: boolean) => {})
 
 	function handlePointerDown() {
 		console.log("Pointer down on button", props.context)

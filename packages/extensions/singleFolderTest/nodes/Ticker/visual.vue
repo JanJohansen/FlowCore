@@ -7,11 +7,12 @@
 </template>
 
 <script setup lang="ts">
-	import { default as FlowNodeBase, ICustomeNodeContext } from "../../FlowNodeBase.vue"
 	import { ref } from "vue"
+	import { FlowNodeBase } from "../../../frontend-types"
+	import type { ICustomNodeContext, IFlowNodeModel, INodeDefinition } from "../../../frontend-types"
 
 	const props = defineProps<{
-		context: ICustomeNodeContext
+		context: ICustomNodeContext
 	}>()
 
 	const tick = ref(0)

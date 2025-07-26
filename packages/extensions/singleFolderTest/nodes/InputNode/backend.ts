@@ -1,4 +1,4 @@
-import { NodeBackendBaseV1 } from "../../backend_types"
+import { NodeBackendBaseV1 } from "../../../backend-types"
 
 export default class InputNode extends NodeBackendBaseV1 {
     // timer: NodeJS.Timeout | null = null

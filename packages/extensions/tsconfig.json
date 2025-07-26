@@ -1,0 +1,25 @@
+{
+	"compilerOptions": {
+		"target": "ES2020",
+		"useDefineForClassFields": true,
+		"module": "ESNext",
+		"lib": ["ES2020", "DOM", "DOM.Iterable"],
+		"skipLibCheck": true,
+		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"noEmit": true,
+		"jsx": "preserve",
+		"strict": true,
+		"baseUrl": ".",
+		"paths": {
+			"@webapp/frontend/src/*": ["../frontend/src/*"],
+			"@webapp/frontend/*": ["../frontend/*"],
+			"@webapp/backend": ["../backend/src/core/coreDB/client/index.ts"],
+			"@webapp/backend/src/*": ["../backend/src/*"],
+			"@webapp/backend/*": ["../backend/*"]
+		}
+	},
+	"include": ["**/*.ts", "**/*.d.ts", "**/*.tsx", "**/*.vue"]
+}
