@@ -8,9 +8,6 @@ export default class FunctionNode extends NodeBackendBaseV1 {
     setup() {
         console.log("Setting up FunctionNode:", this.context)
 
-        // // Initialize enhanced context with storage capabilities
-        // this.initializeEnhancedContext()
-
         // // Listen for changes to the backend code
         // this.ins.on("backendCode", (code: string) => {
         //     if (code) {
@@ -55,26 +52,6 @@ export default class FunctionNode extends NodeBackendBaseV1 {
         //     }
         // })
     }
-
-    // /**
-    //  * Initialize enhanced context object with storage capabilities
-    //  */
-    // private initializeEnhancedContext() {
-    //     this.enhancedContext = {
-    //         node: {
-    //             id: this.context.node.id,
-    //             type: this.nodeType,
-    //             name: this.context.node.name || this.context.node.id,
-    //             inputs: {},
-    //             outputs: {},
-    //             config: this.context.node.config || {},
-    //             state: this.context.node.state || {}
-    //         },
-    //         flow: this.context.flow || {},
-    //         global: this.context.global || {},
-    //         nodeType: this.context.type || {}
-    //     }
-    // }
 
     // /**
     //  * Set up listeners for input changes based on input definitions

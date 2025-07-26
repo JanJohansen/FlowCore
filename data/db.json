@@ -87,6 +87,22 @@
           },
           "outs": {}
         }
+      },
+      {
+        "id": "dk.johansenweb.core.graphNodeV1_1753570729261",
+        "typeUID": "dk.johansenweb.core.graphNodeV1",
+        "position": {
+          "x": 240,
+          "y": 520
+        },
+        "size": {
+          "width": 200,
+          "height": 200
+        },
+        "config": {
+          "ins": {},
+          "outs": {}
+        }
       }
     ],
     "connections": [

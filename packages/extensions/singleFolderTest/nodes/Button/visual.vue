@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-	import { FlowNodeBase, ICustomNodeContext, IFlowNodeModel, INodeDefinition } from "../../../frontend-types"
+	import { FlowNodeBase, ICustomNodeContext } from "../../../frontend-types"
 
 	const props = defineProps<{
 		context: ICustomNodeContext
