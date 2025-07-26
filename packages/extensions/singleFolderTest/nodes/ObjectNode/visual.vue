@@ -42,13 +42,13 @@
 	// })
 
 	setTimeout(() => {
-		console.log("Adding new input port to:", props.nodeDefinition)
+		console.log("Adding new input port to:", props.context.nodeDefinition)
 		// Add new input
-		props.nodeDefinition.ins!["NEW_INPUT"] = {
+		props.context.nodeDefinition.ins!["NEW_INPUT"] = {
 			type: "string",
 			description: "Dynamically added input"
 		}
-		props.nodeDefinition.ins!.objectId.description = "Changed description"
+		props.context.nodeDefinition.ins!.objectId.description = "Changed description"
 	}, 5000)
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-	<flow-node-base>
+	<flow-node-base :context="props.context">
 		<template #body>
 			<div class="chart-container">
 				<div ref="chartRef" class="chart"></div>
