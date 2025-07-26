@@ -181,13 +181,13 @@
 		margin-top: 2rem;
 		padding: 1rem;
 		border: 1px solid #e5e7eb;
-		border-radius: 8px;
+		border-radius: 4px;
 		background-color: #f9fafb;
 	}
 
 	.chart {
-		width: 50px;
-		height: 25px;
+		width: 100%;
+		height: 200px;
 	}
 
 	h2 {

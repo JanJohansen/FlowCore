@@ -25,7 +25,7 @@
 		default: false
 	}
 
-	props.context.db.on(props.context.node.id + ".ins.pressed", (val: boolean) => {})
+	// props.context.db.on(props.context.node.id + ".ins.pressed", (val: boolean) => {})
 
 	function handlePointerDown() {
 		console.log("Pointer down on button", props.context)
