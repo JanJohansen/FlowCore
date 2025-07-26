@@ -1,5 +1,5 @@
 <template>
-	<flow-node-base :context="props.context" :node="props.node" :node-definition="nodeDefinition">
+	<flow-node-base :context="props.context">
 		<template #body>
 			<button>ClicButt!</button>
 		</template>
@@ -7,19 +7,16 @@
 </template>
 
 <script setup lang="ts">
-	import { FlowNodeBase } from "../../../frontend-types"
-	import type { ICustomNodeContext, IFlowNodeModel, INodeDefinition } from "../../../frontend-types"
+	import { FlowNodeBase, ICustomNodeContext } from "../../../frontend-types"
 
 	const props = defineProps<{
 		context: ICustomNodeContext
-		node: IFlowNodeModel
-		nodeDefinition: INodeDefinition
 	}>()
 
-	props.nodeDefinition.ins.objectId = {
-		type: "enum",
-		options: ["option1", "option2", "option3"]
-	}
+	// props.context.nodeDefinition.ins!.objectId = {
+	// 	type: "enum",
+	// 	options: ["option1", "option2", "option3"]
+	// }
 
 	// const nodeDefinition = reactive<INodeDefinition>({
 	// 	typeName: "Overwritten Z2M Object",

@@ -1,5 +1,5 @@
 <template>
-	<flow-node-base :context="props.context" :node="props.node" :nodeDefinition="props.nodeDefinition">
+	<flow-node-base :context="props.context">
 		<template #body>
 			<button
 				@pointerdown.stop=""
@@ -13,14 +13,10 @@
 </template>
 
 <script setup lang="ts">
-	import { ref } from "vue"
-	import { default as FlowNodeBase, ICustomNodeContext } from "../../FlowNodeBase.vue"
-	import { IFlowNodeModel, INodeDefinition } from "../../types"
+	import { FlowNodeBase, ICustomNodeContext } from "../../../frontend-types"
 
 	const props = defineProps<{
 		context: ICustomNodeContext
-		node: IFlowNodeModel
-		nodeDefinition: INodeDefinition
 	}>()
 
 	// props.context.db.on(props.context.node.id + ".ins.pressed", (val: boolean) => {})

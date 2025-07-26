@@ -1,7 +1,5 @@
 <template>
-	<flow-node-base :context="props.context" :node="props.node" :node-definition="props.nodeDefinition">
-		Node definition missing!
-	</flow-node-base>
+	<flow-node-base :context="props.context"> Node definition missing! </flow-node-base>
 </template>
 
 <script setup lang="ts">

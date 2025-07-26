@@ -43,7 +43,7 @@
 						:key="node.id"
 						:is="flowStore.getNodeComponent(node.typeUID) || DefaultNode"
 						:context="{
-							node: { id: node.id },
+							node: node,
 							nodeDefinition: flowStore.getNodeDefinition(node.typeUID),
 							db: flowStore.db
 						}"

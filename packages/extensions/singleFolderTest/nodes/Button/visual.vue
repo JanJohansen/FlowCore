@@ -1,5 +1,5 @@
 <template>
-	<flow-node-base :context="props.context" :node="props.node" :nodeDefinition="props.nodeDefinition">
+	<flow-node-base :context="props.context">
 		<template #body>
 			<button
 				@pointerdown.stop=""

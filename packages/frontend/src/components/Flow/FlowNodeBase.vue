@@ -8,8 +8,8 @@
 	>
 		<PropertyEditor
 			v-if="showPropertyEditor"
-			:node="node"
-			:node-definition="nodeDefinition"
+			:node="props.context.node"
+			:node-definition="props.context.nodeDefinition"
 			:is-visible="showPropertyEditor"
 			@close="showPropertyEditor = false"
 		/>
@@ -76,7 +76,7 @@
 
 <script setup lang="ts">
 	export interface ICustomNodeContext {
-		node: { id: string }
+		node: IFlowNodeModel
 		nodeDefinition: INodeDefinition
 		db: any
 	}
@@ -88,20 +88,20 @@
 
 	interface Props {
 		context: ICustomNodeContext
-		node: IFlowNodeModel
-		nodeDefinition: INodeDefinition
+		// node: IFlowNodeModel
+		// nodeDefinition: INodeDefinition
 	}
 	const props = defineProps<Props>()
 
-	if (!props.context) console.error("****** No context provided for node:", props.node)
+	if (!props.context) console.error("****** No context provided for node!")
 
 	// Get the flowStore
 	const flowStore = useFlowStore()
 
 	// Use the ref in computed properties or pass directly to child components
-	const nodeId = computed(() => props.node.id)
-	const nodeTypeUID = computed(() => props.node.typeUID)
-	const initialPosition = computed(() => props.node.position)
+	const nodeId = computed(() => props.context.node.id)
+	const nodeTypeUID = computed(() => props.context.node.typeUID)
+	const initialPosition = computed(() => props.context.node.position)
 
 	// Property editor state
 	const showPropertyEditor = ref(false)
@@ -122,31 +122,30 @@
 	}
 
 	// NodePorts functionality
-	const inputKeys = computed(() => Object.keys(props.nodeDefinition?.ins || {}))
-	const outputKeys = computed(() => Object.keys(props.nodeDefinition?.outs || {}))
-	const maxPorts = computed(() => Math.max(inputKeys.value.length, outputKeys.value.length))
+	const inputKeys = computed(() => Object.keys(props.context.nodeDefinition?.ins || {}))
+	const outputKeys = computed(() => Object.keys(props.context.nodeDefinition?.outs || {}))
 
 	// Check if an input has a value set
 	function hasInputValue(inputName: string): boolean {
 		return !!(
-			props.node.config?.ins &&
-			props.node.config.ins[inputName] &&
-			props.node.config.ins[inputName].value !== undefined
+			props.context.node.config?.ins &&
+			props.context.node.config.ins[inputName] &&
+			props.context.node.config.ins[inputName].value !== undefined
 		)
 	}
 
 	// Connection handling - call FlowStore methods directly
 	function handleConnectionStart(portType: string, portId: string, _event: PointerEvent) {
-		console.log(`Starting connection from ${portType} port: ${portId} on node: ${props.node.id}`)
+		console.log(`Starting connection from ${portType} port: ${portId} on node: ${props.context.node.id}`)
 
 		// Get the port position from the nodePortPositions
-		const nodePorts = flowStore.nodePortPositions.get(props.node.id)
+		const nodePorts = flowStore.nodePortPositions.get(props.context.node.id)
 		let portPosition = { x: 0, y: 0 }
 
 		if (nodePorts) {
 			// Find the port by index
 			const portList = portType === "input" ? nodePorts.inputs : nodePorts.outputs
-			const nodeDef = flowStore.getNodeDefinition(props.node.typeUID)
+			const nodeDef = flowStore.getNodeDefinition(props.context.node.typeUID)
 			const portKeys = portType === "input" ? Object.keys(nodeDef?.ins || {}) : Object.keys(nodeDef?.outs || {})
 
 			const portIndex = portKeys.indexOf(portId)
@@ -162,7 +161,7 @@
 
 		// Call FlowStore method directly instead of emitting event
 		flowStore.startConnection({
-			nodeId: props.node.id,
+			nodeId: props.context.node.id,
 			portId: portId,
 			portType: portType,
 			x: portPosition.x,
@@ -175,16 +174,16 @@
 	}
 
 	function handleConnectionEnd(portType: string, portId: string, _event: PointerEvent) {
-		console.log(`Ending connection at ${portType} port: ${portId} on node: ${props.node.id}`)
+		console.log(`Ending connection at ${portType} port: ${portId} on node: ${props.context.node.id}`)
 
 		// Get the port position from the nodePortPositions
-		const nodePorts = flowStore.nodePortPositions.get(props.node.id)
+		const nodePorts = flowStore.nodePortPositions.get(props.context.node.id)
 		let portPosition = { x: 0, y: 0 }
 
 		if (nodePorts) {
 			// Find the port by index
 			const portList = portType === "input" ? nodePorts.inputs : nodePorts.outputs
-			const nodeDef = flowStore.getNodeDefinition(props.node.typeUID)
+			const nodeDef = flowStore.getNodeDefinition(props.context.node.typeUID)
 			const portKeys = portType === "input" ? Object.keys(nodeDef?.ins || {}) : Object.keys(nodeDef?.outs || {})
 
 			const portIndex = portKeys.indexOf(portId)
@@ -200,7 +199,7 @@
 
 		// Call FlowStore method directly instead of emitting event
 		flowStore.endConnection({
-			nodeId: props.node.id,
+			nodeId: props.context.node.id,
 			portId: portId,
 			portType: portType,
 			x: portPosition.x,

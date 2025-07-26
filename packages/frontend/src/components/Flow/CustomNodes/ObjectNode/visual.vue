@@ -1,5 +1,5 @@
 <template>
-	<flow-node-base :context="props.context" :node="props.node" :node-definition="nodeDefinition">
+	<flow-node-base :context="props.context">
 		<template #body>
 			<button>ClicButt!</button>
 		</template>
@@ -9,15 +9,12 @@
 <script setup lang="ts">
 	// import { reactive } from "vue"
 	import FlowNodeBase, { ICustomNodeContext } from "../../FlowNodeBase.vue"
-	import { IFlowNodeModel, INodeDefinition } from "../../types"
 
 	const props = defineProps<{
 		context: ICustomNodeContext
-		node: IFlowNodeModel
-		nodeDefinition: INodeDefinition
 	}>()
 
-	props.nodeDefinition.ins.objectId = {
+	props.context.nodeDefinition.ins!.objectId = {
 		type: "enum",
 		options: ["option1", "option2", "option3"]
 	}

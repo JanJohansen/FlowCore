@@ -1,5 +1,5 @@
 <template>
-	<flow-node-base :context="props.context" :node="props.node" :nodeDefinition="props.nodeDefinition">
+	<flow-node-base :context="props.context">
 		<template #header>
 			<span class="node-title">{{ displayName }}</span>
 		</template>
@@ -30,13 +30,10 @@
 	import { ref, onMounted } from "vue"
 	import { default as FlowNodeBase, ICustomNodeContext } from "../../FlowNodeBase.vue"
 	import CodeEditorModal from "./CodeEditorModal.vue"
-	import { IFlowNodeModel, INodeDefinition } from "../../types"
 	import { useFlowStore } from "../../../../stores/flowStore"
 
 	const props = defineProps<{
 		context: ICustomNodeContext
-		node: IFlowNodeModel
-		nodeDefinition: INodeDefinition
 	}>()
 
 	const showEditor = ref(false)

@@ -1,5 +1,5 @@
 <template>
-	<flow-node-base :context="props.context" :node="props.node" :nodeDefinition="props.nodeDefinition">
+	<flow-node-base :context="props.context">
 		<template #body>
 			<div class="output-node-content">
 				<div class="output-value">{{ value }}</div>
@@ -10,13 +10,10 @@
 
 <script setup lang="ts">
 	import { ref } from "vue"
-	import { FlowNodeBase } from "../../../frontend-types"
-	import type { ICustomNodeContext, IFlowNodeModel, INodeDefinition } from "../../../frontend-types"
+	import { FlowNodeBase, ICustomNodeContext } from "../../../frontend-types"
 
 	const props = defineProps<{
 		context: ICustomNodeContext
-		node: IFlowNodeModel
-		nodeDefinition: INodeDefinition
 	}>()
 
 	const value = ref()
