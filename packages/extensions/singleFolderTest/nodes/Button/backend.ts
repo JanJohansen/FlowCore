@@ -1,7 +1,6 @@
 import { NodeBackendBaseV1 } from "../../../backend-types"
 
 export default class ButtonNode extends NodeBackendBaseV1 {
-    nodeType = "Button"
     CLICK_THRESHOLD_MS = 3000
     LONG_PRESS_THRESHOLD_MS = 10000
 
@@ -16,14 +15,14 @@ export default class ButtonNode extends NodeBackendBaseV1 {
         this.ins.on("pressed", (val: boolean) => {
             console.log("Button pressed:", val)
             if (val === true) {
-                this.handlePointerDown()
+                this.handlePressed()
             } else {
-                this.handlePointerUp()
+                this.handleReleased()
             }
         })
     }
 
-    handlePointerDown() {
+    handlePressed() {
         console.log("Pointer down on button")
         this.pressStartTime = Date.now()
 
@@ -38,11 +37,12 @@ export default class ButtonNode extends NodeBackendBaseV1 {
         }, this.CLICK_THRESHOLD_MS)
 
         this.tenSecTimer = setTimeout(() => {
+            console.log("ButtonNode: 10sPress", this.context.node.id)
             this.outs.set("10sPress", true)
         }, this.LONG_PRESS_THRESHOLD_MS)
     }
 
-    handlePointerUp() {
+    handleReleased() {
         console.log("Pointer up on button")
 
         // Use public methods from base class
@@ -54,6 +54,12 @@ export default class ButtonNode extends NodeBackendBaseV1 {
         }
 
         // Clean up - clear timers
+        this.clearTimers()
+
+        this.pressStartTime = null
+    }
+
+    private clearTimers() {
         if (this.threeSecTimer) {
             clearTimeout(this.threeSecTimer)
             this.threeSecTimer = null
@@ -63,11 +69,10 @@ export default class ButtonNode extends NodeBackendBaseV1 {
             clearTimeout(this.tenSecTimer)
             this.tenSecTimer = null
         }
-
-        this.pressStartTime = null
     }
 
     cleanup() {
         console.log("Cleaning up ButtonNode:", this.context)
+        this.clearTimers()
     }
 }

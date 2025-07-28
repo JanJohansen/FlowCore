@@ -1,5 +1,6 @@
 // Re-export all types from CoreDBClient
 export * from './core/coreDB/client/types'
+import type { CoreDB } from './core/coreDB/CoreDB'
 
 // Common shared types that can be used across frontend and backend
 export interface AppConfig {
@@ -51,7 +52,7 @@ export interface IFlowConnection {
 
 // Backend node context interface
 export interface IBackendBaseNodeContext {
-    db: any // CoreDB instance
+    dbUser: import('./core/coreDB/CoreDB').CoreDBUser // CoreDBUser instance managed by FlowCore
     global: any
     flow: any
     type: any
@@ -63,5 +64,5 @@ export interface ISetupContext {
     flow: any
     type: any
     node: any | { id: string }
-    db?: any // Optional since it gets deleted
+    dbUser?: import('./core/coreDB/CoreDB').CoreDBUser // Optional for backward compatibility
 }

@@ -111,6 +111,7 @@ export class FlowCore {
     private flows: { [flowId: string]: IFlowModel } = {}
     private flowConnections: { [flowId: string]: CoreDBUser } = {}
     private nodes: { [nodeId: string]: NodeBackendBaseV1 } = {}
+    private nodeDBUsers: { [nodeId: string]: CoreDBUser } = {} // Track CoreDBUser instances for cleanup
     private flowContexts: { [flowId: string]: any } = {}
     private typeContexts: { [nodeTypeUID: string]: any } = {}
     private globalFlowContext = {}
@@ -187,7 +188,7 @@ export class FlowCore {
         this.flowConnections[flowId].unsubscribeAll()
         delete this.flowConnections[flowId]
 
-        // Unload all nodes in the flow
+        // Unload all nodes in the flow (this will handle CoreDBUser cleanup)
         flow.nodes.forEach(node => {
             this.unloadNode(flowId, node)
         })
@@ -228,8 +229,12 @@ export class FlowCore {
         }
 
         try {
+            // Create a dedicated CoreDBUser for this node
+            const nodeDBUser = new CoreDBUser(this.db)
+            this.nodeDBUsers[node.id] = nodeDBUser
+
             const context: IBackendBaseNodeContext = {
-                db: this.db,
+                dbUser: nodeDBUser,
                 global: this.globalFlowContext,
                 flow: this.flowContexts[flowId],
                 type: this.typeContexts[node.typeUID],
@@ -250,15 +255,9 @@ export class FlowCore {
         // Unload a specific node
         console.log('Unloading node:', node.id)
         const nodeInstance = this.nodes[node.id]
+        const nodeDBUser = this.nodeDBUsers[node.id]
 
         if (nodeInstance) {
-            const context = {
-                global: this.globalFlowContext,
-                flow: this.flowContexts[flowId],
-                type: this.typeContexts[node.typeUID],
-                node: { id: node.id }
-            }
-
             try {
                 nodeInstance._baseCleanup()
             } catch (error) {
@@ -269,6 +268,16 @@ export class FlowCore {
             delete this.nodes[node.id]
         } else {
             console.warn(`Attempted to unload non-existent node: ${node.id}`)
+        }
+
+        // Clean up the node's CoreDBUser instance
+        if (nodeDBUser) {
+            try {
+                nodeDBUser.unsubscribeAll()
+            } catch (error) {
+                console.error(`Error unsubscribing node ${node.id} CoreDBUser:`, error)
+            }
+            delete this.nodeDBUsers[node.id]
         }
     }
 }
