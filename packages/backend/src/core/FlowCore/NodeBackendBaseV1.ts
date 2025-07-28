@@ -26,6 +26,19 @@ export class NodeBackendBaseV1 {
         }
     }
 
+    log = {
+        browser: (...args: any[]) => {
+            console.log(`[Node ${this.context.node.id}]`, ...args)
+        }
+    }
+
+    notifyFrontendNode = (message: string, data?: any) => {
+        this.dbUser.set(`${this.context.node.id}.__notifyFrontendNode`, {
+            message,
+            data
+        })
+    }
+
     // Optional lifecycle methods that can be overridden by subclasses
     setup?(): void
     cleanup?(): void
