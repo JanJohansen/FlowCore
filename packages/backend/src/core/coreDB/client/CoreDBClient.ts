@@ -351,7 +351,7 @@ export class CoreDBClient {
     }
 }
 
-export class CoreDBWrapper {
+export class CoreDBClientUser {
     private client: CoreDBClient
     private subscriptions: (() => void)[] = [];
 

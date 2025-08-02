@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { CoreDBClient, CoreDBWrapper } from "@webapp/backend/core/coreDB/client/CoreDBClient"
+import { CoreDBClient, CoreDBClientUser } from "@webapp/backend/core/coreDB/client/CoreDBClient"
 import { CoreDBWSTransport } from "@webapp/backend/core/coreDB/client/CoreDBWSTransport"
 
 // Connection status event callbacks type
@@ -18,7 +18,7 @@ export const useCoreDBStore = defineStore('CoreDBStore', () => {
 
     const getWrapper = () => {
         console.log('Creating new CoreDBWrapper instance')
-        return new CoreDBWrapper(client)
+        return new CoreDBClientUser(client)
     }
 
     // Add connection status callback
