@@ -21,7 +21,8 @@
 	// TODO: Get list of existing MQTT servers - compbinied options + text field?
 
 	// Get list of topics from MQTT server
-	props.context.setTimeout(() => {
+	// props.context.
+	setTimeout(() => {
 		console.log("Adding new input port to:", props.context.nodeDefinition)
 		// Add new input
 		props.context.nodeDefinition.ins!["NEW_INPUT"] = {
