@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed, onUnmounted } from 'vue'
-import { useCoreDBStore } from '../services/CoreDB/CoreDBStore'
+import { CoreDbUser } from '../services/CoreDbUser'
 import type { INotification } from '../types/notifications'
 
 export const useNotificationStore = defineStore('notificationStore', () => {
@@ -10,8 +10,7 @@ export const useNotificationStore = defineStore('notificationStore', () => {
     const currentUserId = ref<string>('*') // Default to broadcast, can be set by app
 
     // CoreDB setup
-    const coreDBStore = useCoreDBStore()
-    const db = coreDBStore.getWrapper()
+    const db = new CoreDbUser()
 
     // Subscription cleanup functions
     const subscriptions: (() => void)[] = []

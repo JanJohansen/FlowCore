@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, reactive, computed } from 'vue'
-import { useCoreDBStore } from '../services/CoreDB/CoreDBStore'
+import { CoreDbUser } from '../services/CoreDbUser'
 import type {
     IDashboard,
     IDashComponent,
@@ -89,7 +89,7 @@ export const useDashStore = defineStore('dashStore', () => {
     })
 
     // ===== CoreDB Integration =====
-    const db = useCoreDBStore().getWrapper()
+    const db = new CoreDbUser()
 
     // ===== Dashboard Management =====
     const createDashboard = (name: string, format: IDashFormat): IDashboard => {

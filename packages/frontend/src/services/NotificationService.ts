@@ -1,4 +1,4 @@
-import { useCoreDBStore } from '../services/CoreDB/CoreDBStore'
+import { CoreDbUser } from './CoreDbUser'
 import { useNotificationStore } from '../stores/notificationStore'
 import type { INotification, INotificationAPI } from '../types/notifications'
 
@@ -14,8 +14,7 @@ export class NotificationService implements INotificationAPI {
     private static instance: NotificationService | null = null
 
     private constructor() {
-        this.coreDBStore = useCoreDBStore()
-        this.db = this.coreDBStore.getWrapper()
+        this.db = new CoreDbUser()
         this.notificationStore = useNotificationStore()
     }
 

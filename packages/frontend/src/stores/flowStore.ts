@@ -10,7 +10,7 @@ import type {
     INodeDefinition,
     ConnectionPoint
 } from '../components/Flow/types'
-import { useCoreDBStore } from '../services/CoreDB/CoreDBStore'
+import { CoreDbUser } from '../services/CoreDbUser'
 
 // Utility functions
 function createID(): string {
@@ -480,7 +480,7 @@ export const useFlowStore = defineStore('flowStore', () => {
 
     // ===== Initialize =====
     // Initialize CoreDB connection
-    const db = useCoreDBStore().getWrapper()
+    const db = new CoreDbUser()
     db.onPatch("customNodePaths", (val) => {
         console.log("Received customNodePaths patch:", val)
         loadNodes(val)

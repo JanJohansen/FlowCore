@@ -121,7 +121,7 @@
 
 <script setup lang="ts">
 	import { ref, reactive, onMounted, onUnmounted, watch, computed } from "vue"
-	import { useCoreDBStore } from "../services/CoreDB/CoreDBStore"
+	import { CoreDbUser } from "../services/CoreDbUser"
 	import FlowNode from "../components/DBFlowVisual.vue"
 	import FlowNodeTooltip from "../components/FlowNodeTooltip.vue"
 	import PageLayout from "../components/PageLayout.vue"
@@ -152,8 +152,7 @@
 	})
 
 	// Initialize store and get wrapper
-	const coreDBStore = useCoreDBStore()
-	const wrapper = coreDBStore.getWrapper()
+	const db = new CoreDbUser()
 	const isConnected = computed(() => coreDBStore.isConnected)
 	const reconnecting = computed(() => coreDBStore.reconnecting)
 
@@ -166,14 +165,14 @@
 	const setValue = async () => {
 		try {
 			const value = JSON.parse(valueInput.value)
-			await wrapper.set(keyInput.value, value)
+			await db.set(keyInput.value, value)
 		} catch (error) {
 			console.error("Error setting value:", error)
 		}
 	}
 
 	const subscribeToKey = () => {
-		wrapper.onPatch(subscribeKeyInput.value, (patch: any) => {
+		db.onPatch(subscribeKeyInput.value, (patch: any) => {
 			updates.value.push({
 				key: subscribeKeyInput.value,
 				value: patch
@@ -184,10 +183,10 @@
 	const subscribeToObjectTypes = () => {
 		console.log("Subscribing to idx:type=?")
 		try {
-			wrapper.onPatch("idx:type=?", (patch: any) => {
+			db.onPatch("idx:type=?", (patch: any) => {
 				console.log("Received types patch:", patch)
 				// merge types into objectTypes
-				wrapper.applyPatch(objectTypes, patch)
+				db.applyPatch(objectTypes, patch)
 			})
 		} catch (error) {
 			console.error("Failed to subscribe:", error)
@@ -212,14 +211,14 @@
 		if (newType) {
 			const typeIndex = `idx:type=${newType}`
 
-			unsubscribeIndex = wrapper.onPatch(typeIndex, (indexPatch: Record<string, unknown>) => {
+			unsubscribeIndex = db.onPatch(typeIndex, (indexPatch: Record<string, unknown>) => {
 				for (const [id, exists] of Object.entries(indexPatch)) {
 					if (exists !== null) {
 						// Only create new subscription if one doesn't exist
 						if (!objectSubscriptions.has(id)) {
-							const unsubscribe = wrapper.onPatch(id, (patch: unknown) => {
+							const unsubscribe = db.onPatch(id, (patch: unknown) => {
 								if (!typeObjects[id]) typeObjects[id] = {}
-								wrapper.applyPatch(typeObjects[id], patch)
+								db.applyPatch(typeObjects[id], patch)
 							})
 							objectSubscriptions.set(id, unsubscribe)
 						}
@@ -252,7 +251,7 @@
 	})
 
 	onUnmounted(() => {
-		wrapper.unsubscribeAll()
+		db.unsubscribeAll()
 	})
 
 	// Tooltip state

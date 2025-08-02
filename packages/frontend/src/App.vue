@@ -5,27 +5,8 @@
 </template>
 
 <script setup lang="ts">
-	import { onMounted, onUnmounted } from "vue"
 	import ConnectionStatusOverlay from "./components/ConnectionStatusOverlay.vue"
 	import NotificationPortal from "./components/NotificationPortal.vue"
-	import { useConnectionStatusStore } from "./stores/connectionStatusStore"
-
-	// Initialize connection status monitoring
-	const connectionStatusStore = useConnectionStatusStore()
-	let unsubscribeConnectionMonitoring: (() => void) | null = null
-
-	onMounted(() => {
-		// Start monitoring connection status
-		unsubscribeConnectionMonitoring = connectionStatusStore.initializeConnectionMonitoring()
-	})
-
-	onUnmounted(() => {
-		// Clean up connection monitoring
-		if (unsubscribeConnectionMonitoring) {
-			unsubscribeConnectionMonitoring()
-		}
-		connectionStatusStore.cleanup()
-	})
 </script>
 
 <style>
