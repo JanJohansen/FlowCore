@@ -1,7 +1,6 @@
-// import { INodeDefinition } from "../../types"
+import { INodeDefinition } from "../../../frontend-types"
 
-// export const nodeDefinition: INodeDefinition = {
-export const nodeDefinition = {
+export const nodeDefinition: INodeDefinition = {
     typeName: "Button",
     typeUID: "com.flow.button",
     category: "Basic",

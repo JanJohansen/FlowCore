@@ -63,10 +63,6 @@ export class CoreDBClient {
         // Handle set callbacks
         const setCallbacks = this.subscriptions.get(message.key! + ':set')
         setCallbacks?.forEach(callback => callback(message.value))
-
-        // Handle legacy callbacks (deprecated)
-        const legacyCallbacks = this.subscriptions.get(message.key!)
-        legacyCallbacks?.forEach(callback => callback(message.patch))
     }
 
     private async handleCallRequest(message: CoreDBMessage): Promise<void> {
@@ -244,15 +240,6 @@ export class CoreDBClient {
         }
     }
 
-    /**
-     * @deprecated Use onPatch() instead. This method will be removed in a future version.
-     * Subscribe to changes on a key (receives patch objects)
-     */
-    public on(key: string, callback: (patch: any) => void): () => void {
-        console.warn('CoreDBClient.on() is deprecated. Use onPatch() instead.')
-        return this.onPatch(key, callback)
-    }
-
     public onCall(key: string, callback: Function): () => void {
         this.registeredFunctions.set(key, callback)
         this.sendMessage({
@@ -399,15 +386,6 @@ export class CoreDBClientUser {
             unsubscribe()
             this.subscriptions = this.subscriptions.filter(sub => sub !== unsubscribe)
         }
-    }
-
-    /**
-     * @deprecated Use onPatch() instead. This method will be removed in a future version.
-     * Subscribe to changes on a key (receives patch objects)
-     */
-    public on(key: string, callback: (patch: any) => void): () => void {
-        console.warn('CoreDBWrapper.on() is deprecated. Use onPatch() instead.')
-        return this.onPatch(key, callback)
     }
 
     /**

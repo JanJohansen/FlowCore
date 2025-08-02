@@ -17,7 +17,7 @@
 
 	const tick = ref(0)
 
-	props.context.db.on(props.context.node.id + ".tick", (newTick: number) => {
+	props.context.db.onPatch(props.context.node.id + ".tick", (newTick: number) => {
 		tick.value = newTick
 	})
 </script>

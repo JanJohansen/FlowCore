@@ -1,4 +1,4 @@
-import { INodeDefinition } from "../../types"
+import { INodeDefinition } from "../../../frontend-types"
 
 export const nodeDefinition: INodeDefinition = {
     typeName: "Function",

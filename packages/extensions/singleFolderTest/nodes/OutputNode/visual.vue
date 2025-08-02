@@ -18,7 +18,7 @@
 
 	const value = ref()
 
-	props.context.db.on(props.context.node.id + ".ins.in1", (val: any) => {
+	props.context.db.onPatch(props.context.node.id + ".ins.in1", (val: any) => {
 		console.log("OutputNode received value:", val)
 		value.value = val
 	})

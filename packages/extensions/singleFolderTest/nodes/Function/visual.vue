@@ -46,7 +46,7 @@
 	const logOutput = ref("Log output here:")
 
 	// Listen for log output from the backend
-	props.context.db.on(`${props.context.node.id}.outs._log`, (val: string) => {
+	props.context.db.onPatch(`${props.context.node.id}.outs._log`, (val: string) => {
 		logOutput.value = val
 	})
 

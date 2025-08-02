@@ -1,7 +1,7 @@
 <template>
 	<nav class="nav-menu" ref="menuRef" @mouseenter="openMenu" @mouseleave="closeMenu">
 		<div class="dropdown">
-			<button class="dropdown-toggle" @click="deprecated - toggleMenu">
+			<button class="dropdown-toggle" @click="toggleMenu">
 				<i class="fa fa-navicon"></i>
 				<span class="arrow" :class="{ 'arrow-up': isOpen }">▼</span>
 			</button>

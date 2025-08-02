@@ -12,7 +12,7 @@ export default class ObjectNode extends NodeBackendBaseV1 {
         // Implementation for setup
         console.log("Setting up Object node:", this.context)
 
-        this.ins.on("URL:Port", (value) => {
+        this.ins.on("URL", (value) => {
             console.log("MQTT broker URL and port set to:", value)
             this.urlPort = value
         })
@@ -45,7 +45,7 @@ export default class ObjectNode extends NodeBackendBaseV1 {
             console.log(`Received message on topic ${topic}:`, message.toString())
             // Handle incoming messages here
             if (!this.topics[topic]) {
-                this.outs.set(this.context.node.id + ".topics", topic)
+                this.outs.set(this.context.node.id + ".serverTopics", topic)
             }
             this.topics[topic] = message.toString()
         })

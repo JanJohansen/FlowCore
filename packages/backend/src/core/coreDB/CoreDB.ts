@@ -708,15 +708,6 @@ export class CoreDB {
     }
 
     /**
-     * @deprecated Use onPatch() instead. This method will be removed in a future version.
-     * Subscribe to changes on a key (receives patch objects)
-     */
-    on(key: string, callback: Callback<any>): UnsubscribeFunction {
-        console.warn('CoreDB.on() is deprecated. Use onPatch() instead.')
-        return this.onPatch(key, callback)
-    }
-
-    /**
      * Register a callback function that can be invoked remotely by other CoreDB users
      * @param key Unique identifier for the RPC endpoint
      * @param callback Function to be called when this RPC is invoked (can be sync or async)
@@ -782,17 +773,6 @@ export class CoreDBUser {
         const unsubscribe = this.db.onSet(key, callback)
         this.subscriptions.set(key + ':set', unsubscribe)
         return unsubscribe
-    }
-
-    /**
-     * @deprecated Use onPatch() instead. This method will be removed in a future version.
-     * Subscribe to changes on a key with automatic subscription management
-     * @param key The key to subscribe to (can be a regular key or index key starting with 'idx:')
-     * @param callback Function to be called when the value changes
-     */
-    on(key: string, callback: (data: any) => void): () => void {
-        console.warn('CoreDBUser.on() is deprecated. Use onPatch() instead.')
-        return this.onPatch(key, callback)
     }
 
     /**

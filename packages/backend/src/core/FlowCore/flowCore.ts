@@ -117,7 +117,7 @@ export class FlowCore {
     private globalFlowContext = {}
 
     monitorFlows() {
-        this.db.on("idx:type=RootFlow", (Patch: { [flowId: string]: {} }) => {
+        this.db.onPatch("idx:type=RootFlow", (Patch: { [flowId: string]: {} }) => {
             console.log('RootFlow index update:', Patch)
             for (let flowId in Patch) {
                 if (this.flows[flowId]) continue  // Skip if already subscribed/loaded
@@ -129,7 +129,7 @@ export class FlowCore {
                 }
 
                 // Subscribe to new rootflow
-                this.db.on(flowId, (patch: any) => {
+                this.db.onPatch(flowId, (patch: any) => {
                     if (patch != null) {
                         console.log('RootFlow updated:', flowId)
                         // First unload the existing flow using flowId
@@ -163,7 +163,7 @@ export class FlowCore {
 
         // Re-instantiate connections?
         for (let connection of flow.connections) {
-            this.flowConnections[flow.id].on(connection.sourceNodeId + ".outs." + connection.sourcePortId, (patch: any) => {
+            this.flowConnections[flow.id].onPatch(connection.sourceNodeId + ".outs." + connection.sourcePortId, (patch: any) => {
                 console.log('Connection triggered:', connection.sourceNodeId + "." + connection.sourcePortId + "/" + connection.targetNodeId + "." + connection.targetPortId, patch)
                 this.db.patch(connection.targetNodeId + ".ins." + connection.targetPortId, patch)
             })

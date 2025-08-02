@@ -129,17 +129,6 @@ db.onSet("idx:role=admin", (adminUsers) => {
 unsubscribe()
 ```
 
-#### on(key: string, callback: (patch: any) => void): () => void
-
-**⚠️ DEPRECATED** - Use `onPatch()` instead. This method will be removed in a future version.
-
-```typescript
-// Deprecated - shows warning
-const unsubscribe = db.on("user1", (patch) => {
-	console.log("User updated:", patch)
-})
-```
-
 ### onCall(key: string, callback: (args: any) => any): () => void
 
 Registers a function that can be called by other clients. Returns an unsubscribe function.

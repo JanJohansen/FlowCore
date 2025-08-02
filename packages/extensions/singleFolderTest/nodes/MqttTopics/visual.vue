@@ -12,18 +12,26 @@
 </template>
 
 <script setup lang="ts">
+	import { ref } from "vue"
 	import { FlowNodeBase, ICustomNodeContext } from "../../../frontend-types"
 
 	const props = defineProps<{
 		context: ICustomNodeContext
 	}>()
 
+	const servers = ref<string[]>([])
+	const topics = ref<string[]>([])
+
 	// TODO: Get list of existing MQTT servers - combined options + text field?
+	props.context.db.onSet(props.context.node.id + ".servers", (val: string[]) => {
+		console.log("Received server list:", val)
+		servers.value = val
+	})
 
 	// Get list of topics from MQTT server
-	const mqttServer = props.context.db.onSet(props.context.node.id + ".topics", (topics: string[]) => {
-		console.log("Received topics from MQTT server:", topics)
-		// Process the topics as needed
+	props.context.db.onSet(props.context.node.id + ".topics", (val: string[]) => {
+		console.log("Received topics from MQTT server:", val)
+		topics.value = val
 	})
 
 	// props.context.
