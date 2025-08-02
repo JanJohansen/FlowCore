@@ -1,5 +1,4 @@
-// Singleton class for CoreDB user management
-// This class initializes the CoreDB client and manages connection status
+// This class initializes the CoreDB client + transport and manages connection status
 
 import { ref } from 'vue'
 import { CoreDBClient, CoreDBClientUser } from "@webapp/backend/core/coreDB/client/CoreDBClient"

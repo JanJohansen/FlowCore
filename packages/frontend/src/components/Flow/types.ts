@@ -1,3 +1,5 @@
+import { CoreDbUser } from "../../services/CoreDbUser"
+
 // EditorModel ----------------------------------------------------------------
 export interface IEditorModel {
     selectedFlowId: string | null
@@ -157,5 +159,5 @@ export interface IIOValueFrontInstance {
 export interface ICustomNodeContext {
     node: IFlowNodeModel
     nodeDefinition: INodeDefinition
-    db: any
+    db: CoreDbUser
 }

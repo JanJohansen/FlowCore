@@ -45,7 +45,7 @@
 						:context="{
 							node: node,
 							nodeDefinition: flowStore.getNodeDefinition(node.typeUID),
-							db: flowStore.db
+							db: new CoreDbUser()
 						}"
 						:node="node"
 						:node-definition="flowStore.getNodeDefinition(node.typeUID)"
@@ -69,6 +69,7 @@
 	import { GRID_SIZE, MIN_ZOOM, MAX_ZOOM } from "./constants"
 	import DefaultNode from "./DefaultNode.vue"
 	import type { IFlowConnection } from "./types"
+	import { CoreDbUser } from "../../services/CoreDbUser"
 
 	// State declarations
 	const flowStore = useFlowStore()

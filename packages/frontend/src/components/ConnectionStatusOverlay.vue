@@ -2,7 +2,7 @@
 	<Teleport to="body">
 		<Transition name="overlay-fade">
 			<div
-				v-if="!CoreDbUser.isConnected"
+				v-if="!CoreDbUser.isConnected.value"
 				class="connection-overlay"
 				role="dialog"
 				aria-modal="true"
