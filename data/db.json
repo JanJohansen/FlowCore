@@ -66,34 +66,43 @@
         }
       },
       {
-        "id": "com.flow.Z2MObject_1750886838597",
-        "typeUID": "com.flow.Z2MObject",
+        "id": "dk.johansenweb.core.graphNodeV1_1753570729261",
+        "typeUID": "dk.johansenweb.core.graphNodeV1",
         "position": {
-          "x": 540,
-          "y": 140
+          "x": 820,
+          "y": 80
         },
         "size": {
           "width": 200,
           "height": 200
         },
         "config": {
-          "ins": {
-            "objectId": {
-              "value": "option2"
-            },
-            "NEW_INPUT": {
-              "value": "42"
-            }
-          },
+          "ins": {},
           "outs": {}
         }
       },
       {
-        "id": "dk.johansenweb.core.graphNodeV1_1753570729261",
-        "typeUID": "dk.johansenweb.core.graphNodeV1",
+        "id": "com.flow.MqttTopics_1754141232565",
+        "typeUID": "com.flow.MqttTopics",
         "position": {
-          "x": 820,
+          "x": 520,
           "y": 80
+        },
+        "size": {
+          "width": 200,
+          "height": 200
+        },
+        "config": {
+          "ins": {},
+          "outs": {}
+        }
+      },
+      {
+        "id": "com.flow.MqttTopics_1754142091454",
+        "typeUID": "com.flow.MqttTopics",
+        "position": {
+          "x": 620,
+          "y": 680
         },
         "size": {
           "width": 200,
@@ -121,10 +130,10 @@
         "targetPortId": "in1"
       }
     ],
-    "zoom": 1.6105100000000008,
+    "zoom": 0.7818712314920818,
     "pan": {
-      "x": 15.642600987395781,
-      "y": 26.460836438255114
+      "x": -388.2669771419529,
+      "y": 8.291869818560258
     },
     "id": "id_1748987363886_no6fs3gr3",
     "path": "Test_1",

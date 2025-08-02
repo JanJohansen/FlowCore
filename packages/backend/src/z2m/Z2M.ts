@@ -26,7 +26,7 @@ export class Z2M {
         this.db = CoreDB.getGlobalInstance()
         this.baseTopic = config.baseTopic || 'zigbee2mqtt'
 
-        // Connect to MQTT broker
+        // Connect to MQTT broker 
         this.mqtt = mqtt.connect(config.mqttUrl, {
             username: config.username,
             password: config.password
@@ -177,7 +177,7 @@ export class Z2M {
     }
 
     private handleDeviceState(deviceTopic: string, newState: any): void {
-        // console.log('Device state update:', deviceTopic, newState);
+        console.log('Device state update:', deviceTopic, newState)
 
         // Get current state or initialize if not exists
         const currentState = this.deviceStates.get(deviceTopic) || {
@@ -223,6 +223,7 @@ export class Z2M {
             currentState.lastUpdate = patch.lastUpdate
             this.deviceStates.set(deviceTopic, currentState)
             this.db.patch(`z2m/deviceState/${deviceTopic}`, patch)
+            console.log(`Updated state for ${deviceTopic}:`, patch)
         }
     }
 

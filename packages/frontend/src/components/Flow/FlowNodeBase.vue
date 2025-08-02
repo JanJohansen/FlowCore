@@ -75,11 +75,6 @@
 </template>
 
 <script setup lang="ts">
-	export interface ICustomNodeContext {
-		node: IFlowNodeModel
-		nodeDefinition: INodeDefinition
-		db: any
-	}
 	import { computed, ref, onMounted, watch, onUnmounted, nextTick } from "vue"
 	import { useFlowStore } from "../../stores/flowStore"
 	import type { INodeDefinition, IFlowNodeModel } from "./types"

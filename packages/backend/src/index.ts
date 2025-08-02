@@ -95,10 +95,10 @@ const flowCore = new FlowCore(db)
 
 // ****************************************************************************
 // Initialize Zigbee2MQTT
-const z2m = new Z2M({
-    mqttUrl: 'mqtt://192.168.1.124:1883',  // Remove extra 'http://' and '/'
-    username: 'MiX',
-    password: 'jan190374',
-    baseTopic: 'zigbee2mqtt'
-})
+// const z2m = new Z2M({
+//     mqttUrl: 'mqtt://192.168.1.124:1883',  // Remove extra 'http://' and '/'
+//     username: 'MiX',
+//     password: 'jan190374',
+//     baseTopic: 'zigbee2mqtt'
+// })
 

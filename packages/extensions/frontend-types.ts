@@ -1,6 +1,6 @@
 // Frontend-specific re-exports for Vue components
-import { default as FlowNodeBase, type ICustomNodeContext } from "@webapp/frontend/src/components/Flow/FlowNodeBase.vue"
-import type { IFlowNodeModel, INodeDefinition } from "@webapp/frontend/src/components/Flow/types"
+import { default as FlowNodeBase } from "@webapp/frontend/src/components/Flow/FlowNodeBase.vue"
+import type { IFlowNodeModel, INodeDefinition, ICustomNodeContext } from "@webapp/frontend/src/components/Flow/types"
 import { useFlowStore } from "@webapp/frontend/src/stores/flowStore"
 import MonacoEditor from "@webapp/frontend/src/components/MonacoEditor.vue"
 

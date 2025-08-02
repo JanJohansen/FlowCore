@@ -152,3 +152,10 @@ export interface IIOValueFrontInstance {
     description?: string
 }
 
+// ----------------------------------------------------------------------------
+// Custom context for node instances
+export interface ICustomNodeContext {
+    node: IFlowNodeModel
+    nodeDefinition: INodeDefinition
+    db: any
+}
