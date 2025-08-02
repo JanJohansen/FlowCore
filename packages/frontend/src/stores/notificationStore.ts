@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed, onUnmounted } from 'vue'
-import { useCoreDBStore } from '@/services/CoreDB/CoreDBStore'
-import type { INotification } from '@/types/notifications'
+import { useCoreDBStore } from '../services/CoreDB/CoreDBStore'
+import type { INotification } from '../types/notifications'
 
 export const useNotificationStore = defineStore('notificationStore', () => {
     // State

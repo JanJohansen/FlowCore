@@ -11,10 +11,6 @@ import { FlowCore } from './core/FlowCore/flowCore'
 import { NodeBackendBaseV1 } from './core/FlowCore/NodeBackendBaseV1'
 export { NodeBackendBaseV1 }
 
-// Export CoreDB client and types for use by frontend and extensions
-export * from './core/coreDB/client'
-export * from './types'
-
 console.log("**************************************************************************************")
 console.log("**************************************************************************************")
 console.log("**************************************************************************************")

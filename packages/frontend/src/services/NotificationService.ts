@@ -1,6 +1,6 @@
-import { useCoreDBStore } from '@/services/CoreDB/CoreDBStore'
-import { useNotificationStore } from '@/stores/notificationStore'
-import type { INotification, INotificationAPI } from '@/types/notifications'
+import { useCoreDBStore } from '../services/CoreDB/CoreDBStore'
+import { useNotificationStore } from '../stores/notificationStore'
+import type { INotification, INotificationAPI } from '../types/notifications'
 
 /**
  * Notification Service - Local TypeScript API for notification management

@@ -31,7 +31,7 @@
 	import { FlowNodeBase, ICustomNodeContext } from "../../../frontend-types"
 	import CodeEditorModal from "./CodeEditorModal.vue"
 
-	import { useFlowStore } from "@webapp/frontend/src/stores/flowStore"
+	import { useFlowStore } from "@webapp/frontend/stores/flowStore.ts"
 
 	const props = defineProps<{
 		context: ICustomNodeContext

@@ -18,9 +18,14 @@
 		context: ICustomNodeContext
 	}>()
 
-	// TODO: Get list of existing MQTT servers - compbinied options + text field?
+	// TODO: Get list of existing MQTT servers - combined options + text field?
 
 	// Get list of topics from MQTT server
+	const mqttServer = props.context.db.onSet(props.context.node.id + ".topics", (topics: string[]) => {
+		console.log("Received topics from MQTT server:", topics)
+		// Process the topics as needed
+	})
+
 	// props.context.
 	setTimeout(() => {
 		console.log("Adding new input port to:", props.context.nodeDefinition)
@@ -29,7 +34,6 @@
 			type: "string",
 			description: "Dynamically added input"
 		}
-		props.context.nodeDefinition.ins!.objectId.description = "Changed description"
 	}, 5000)
 </script>
 

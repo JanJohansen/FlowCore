@@ -13,7 +13,6 @@
 		"baseUrl": ".",
 		"noImplicitAny": false,
 		"paths": {
-			"@webapp/backend": ["../backend/src/index.ts"],
 			"@webapp/backend/*": ["../backend/src/*"]
 		}
 	},
@@ -21,6 +20,5 @@
 		"esm": true,
 		"experimentalSpecifiers": true
 	},
-	"include": ["src/**/*"],
-	"exclude": ["node_modules", "../common", "src/extensions/**/*", "src/core/coreDB/docs/**/*", "src/z2m/Z2M copy.ts"]
+	"include": ["src/**/*"]
 }

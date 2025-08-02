@@ -1,7 +1,4 @@
 // Re-export all types from CoreDBClient
-export * from './core/coreDB/client/types'
-import type { CoreDB } from './core/coreDB/CoreDB'
-
 // Common shared types that can be used across frontend and backend
 export interface AppConfig {
     apiUrl: string

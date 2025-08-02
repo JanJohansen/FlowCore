@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { CoreDBClient, CoreDBWSTransport, CoreDBWrapper } from '@webapp/backend'
+import { CoreDBClient, CoreDBWrapper } from "@webapp/backend/core/coreDB/client/CoreDBClient"
+import { CoreDBWSTransport } from "@webapp/backend/core/coreDB/client/CoreDBWSTransport"
 
 // Connection status event callbacks type
 type ConnectionStatusCallback = (isConnected: boolean) => void

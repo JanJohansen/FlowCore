@@ -33,7 +33,7 @@
 <script setup lang="ts">
 	import PageLayout from "../components/PageLayout.vue"
 	import { onMounted, ref } from "vue"
-	import { getNotificationService } from "@/services/NotificationService"
+	import { getNotificationService } from "../services/NotificationService"
 
 	const notificationService = ref()
 
