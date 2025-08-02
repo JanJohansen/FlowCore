@@ -6,6 +6,7 @@ export class CoreDBClient {
     private subscriptions = new Map<string, Set<(value: any) => void>>();
     private serverSubscriptions = new Set<string>();
     private registeredFunctions = new Map<string, Function>();
+    private localValues = new Map<string, any>();
     private static instance: CoreDBClient | null = null;
 
     constructor(private transport: CoreDBTransport) {
@@ -60,9 +61,21 @@ export class CoreDBClient {
         const patchCallbacks = this.subscriptions.get(message.key! + ':patch')
         patchCallbacks?.forEach(callback => callback(message.patch))
 
-        // Handle set callbacks
+        // Handle set callbacks - need to apply patch to local value and send full value
         const setCallbacks = this.subscriptions.get(message.key! + ':set')
-        setCallbacks?.forEach(callback => callback(message.value))
+        if (setCallbacks && setCallbacks.size > 0) {
+            // Get current local value
+            let currentValue = this.localValues.get(message.key!)
+
+            // Apply patch to get the new full value
+            const newValue = this.applyPatch(currentValue, message.patch)
+
+            // Store the updated value locally
+            this.localValues.set(message.key!, newValue)
+
+            // Send full value to set callbacks
+            setCallbacks.forEach(callback => callback(newValue))
+        }
     }
 
     private async handleCallRequest(message: CoreDBMessage): Promise<void> {
@@ -211,10 +224,28 @@ export class CoreDBClient {
 
             if (!this.serverSubscriptions.has(key)) {
                 this.serverSubscriptions.add(key)
+
+                // Get initial value and store it locally
+                this.get(key).then(value => {
+                    this.localValues.set(key, value)
+                    // Call the callback with initial value
+                    callback(value)
+                }).catch(() => {
+                    // If get fails, initialize with undefined
+                    this.localValues.set(key, undefined)
+                })
+
+                // Subscribe to patches
                 this.sendMessage({
-                    cmd: 'onSet',
+                    cmd: 'onPatch',
                     key
                 })
+            } else {
+                // If already subscribed, call callback with current local value
+                const currentValue = this.localValues.get(key)
+                if (currentValue !== undefined) {
+                    callback(currentValue)
+                }
             }
         }
 
@@ -230,6 +261,7 @@ export class CoreDBClient {
                     const patchCallbacks = this.subscriptions.get(key + ':patch')
                     if (!patchCallbacks || patchCallbacks.size === 0) {
                         this.serverSubscriptions.delete(key)
+                        this.localValues.delete(key)
                         this.sendMessage({
                             cmd: 'unsubscribe',
                             key
@@ -279,6 +311,7 @@ export class CoreDBClient {
         this.subscriptions.clear()
         this.registeredFunctions.clear()
         this.pendingResponses.clear()
+        this.localValues.clear()
     }
 
     public unsubscribeAll(): void {
@@ -293,6 +326,7 @@ export class CoreDBClient {
         // Clear all local subscriptions and server subscriptions
         this.subscriptions.clear()
         this.serverSubscriptions.clear()
+        this.localValues.clear()
     }
 
     public applyPatch(target: any, source: any): any {
