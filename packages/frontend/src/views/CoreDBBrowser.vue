@@ -2,22 +2,17 @@
 	<PageLayout>
 		<template #header>
 			<h1>CoreDB Browser</h1>
+			<div
+				class="connection-badge"
+				:class="{
+					connected: isConnected
+				}"
+			>
+				{{ connectionStatus }}
+			</div>
 		</template>
 
 		<div class="win-container">
-			<div class="win-titlebar">
-				<div class="win-title">CoreDB Client Debugger</div>
-				<div
-					class="connection-badge"
-					:class="{
-						connected: isConnected,
-						reconnecting: reconnecting
-					}"
-				>
-					{{ connectionStatus }}
-				</div>
-			</div>
-
 			<div class="win-content">
 				<!-- Left Column - Types List -->
 				<div class="win-sidebar">
@@ -54,13 +49,12 @@
 							<div v-for="(value, id) in filteredObjects" :key="id" class="win-object-item">
 								<div class="win-object-header">{{ id }}</div>
 								<!-- Using FlowNode component instead of inline implementation -->
-								<FlowNode
+								<!-- <FlowNode
 									:nodeId="id"
 									:nodeData="value"
 									@showTooltip="showTooltip"
 									@hideTooltip="hideTooltip"
-								/>
-
+								/> -->
 								<!-- Keep the original JSON view as well for reference -->
 								<details class="object-details">
 									<summary>Raw JSON</summary>
@@ -153,12 +147,10 @@
 
 	// Initialize store and get wrapper
 	const db = new CoreDbUser()
-	const isConnected = computed(() => coreDBStore.isConnected)
-	const reconnecting = computed(() => coreDBStore.reconnecting)
+	const isConnected = computed(() => CoreDbUser.isConnected)
 
 	const connectionStatus = computed(() => {
 		if (isConnected.value) return "Connected"
-		if (reconnecting.value) return "Reconnecting..."
 		return "Disconnected"
 	})
 
@@ -245,7 +237,7 @@
 
 	onMounted(() => {
 		console.log("HomeView mounted")
-		if (coreDBStore.isConnected) {
+		if (CoreDbUser.isConnected) {
 			subscribeToObjectTypes()
 		}
 	})
@@ -311,10 +303,6 @@
 
 	.connection-badge.connected {
 		background-color: #2e7d32;
-	}
-
-	.connection-badge.reconnecting {
-		background-color: #f57c00;
 	}
 
 	.win-content {

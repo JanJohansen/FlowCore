@@ -20,7 +20,7 @@
 		}
 	},
 	"scripts": {
-		"dev": "tsx watch --clear-screen=false src/index.ts",
+		"dev": "tsx watch --clear-screen=true src/index.ts",
 		"build": "tsc",
 		"start": "node dist/index.js",
 		"test": "jest --watch",

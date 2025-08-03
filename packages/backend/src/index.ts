@@ -11,6 +11,8 @@ import { FlowCore } from './core/FlowCore/flowCore'
 import { NodeBackendBaseV1 } from './core/FlowCore/NodeBackendBaseV1'
 export { NodeBackendBaseV1 }
 
+// Clear terminal with ANSI escape codes that work better with watch mode
+process.stdout.write('\x1b[2J\x1b[0f')
 console.log("**************************************************************************************")
 console.log("**************************************************************************************")
 console.log("**************************************************************************************")
