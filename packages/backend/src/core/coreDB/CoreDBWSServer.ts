@@ -274,10 +274,9 @@ export class CoreDBWebSocket {
             return
         }
 
-        // First check if the function is registered locally on the server
-        const dbUser = this.clientUsers.get(callerWs)!
+        // First check if the function is registered locally on the server (main db instance)
         try {
-            const result = await dbUser.call(message.key, ...(message.value || []))
+            const result = await this.db.call(message.key, ...(message.value || []))
             this.sendMessage(callerWs, {
                 type: 'response',
                 id: message.id,
@@ -378,13 +377,21 @@ export class CoreDBWebSocket {
     }
 
     public close(): void {
-        this.wss.clients.forEach(client => {
-            const dbUser = this.clientUsers.get(client)
-            if (dbUser) {
-                dbUser.unsubscribeAll()
-            }
-            client.close()
-        })
-        this.wss.close()
+        if (this.wss && this.wss.clients) {
+            this.wss.clients.forEach(client => {
+                const dbUser = this.clientUsers.get(client)
+                if (dbUser) {
+                    dbUser.unsubscribeAll()
+                }
+                client.close()
+            })
+        }
+
+        // Clean up client users map
+        this.clientUsers.clear()
+
+        if (this.wss) {
+            this.wss.close()
+        }
     }
 }

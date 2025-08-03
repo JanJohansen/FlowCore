@@ -49,6 +49,9 @@
 	"jest": {
 		"preset": "ts-jest",
 		"testEnvironment": "node",
+		"testMatch": [
+			"<rootDir>/src/**/*.test.ts"
+		],
 		"extensionsToTreatAsEsm": [
 			".ts"
 		],
