@@ -287,7 +287,7 @@ export const useFlowStore = defineStore('flowStore', () => {
         // console.log(`Getting component for node type: ${nodeType}`)
 
         if (nodeComponents[nodeType]) {
-            console.log(`Component for node type ${nodeType} already loaded`)
+            // console.log(`Component for node type ${nodeType} already loaded`)
             return nodeComponents[nodeType]
         }
 

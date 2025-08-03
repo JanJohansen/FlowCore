@@ -86,11 +86,21 @@ export default class ObjectNode extends NodeBackendBaseV1 {
 
         this.mqtt.on("message", (topic, message) => {
             // Handle incoming messages here
-            console.log(`MQTT: Received message on topic ${topic}:`, message.toString())
+
+            // Try to convert the value to javascript objects from the string
+            let parsedMessage = ""
+            try {
+                parsedMessage = JSON.parse(message.toString())
+            } catch (e) {
+                parsedMessage = message.toString()
+            }
+
+            console.log(`MQTT: Received message on topic ${topic}:`, parsedMessage)
+
             if (!this.topics[topic]) {
-                this.topics[topic] = message.toString()
+                this.topics[topic] = parsedMessage
                 this.outs.set("topics", Object.keys(this.topics))
-            } else this.topics[topic] = message.toString()
+            } else this.topics[topic] = parsedMessage
         })
     }
     cleanup() {
