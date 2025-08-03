@@ -93,23 +93,18 @@
           "height": 200
         },
         "config": {
-          "ins": {},
-          "outs": {}
-        }
-      },
-      {
-        "id": "com.flow.MqttTopics_1754142091454",
-        "typeUID": "com.flow.MqttTopics",
-        "position": {
-          "x": 620,
-          "y": 680
-        },
-        "size": {
-          "width": 200,
-          "height": 200
-        },
-        "config": {
-          "ins": {},
+          "ins": {
+            "URL": {
+              "value": "mqtt://192.168.1.124:1883"
+            },
+            "Username": {
+              "value": "MiX"
+            },
+            "Password": {
+              "value": "jan190374"
+            },
+            "NEW_INPUT": {}
+          },
           "outs": {}
         }
       }

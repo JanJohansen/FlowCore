@@ -284,7 +284,7 @@ export const useFlowStore = defineStore('flowStore', () => {
     }
 
     const getNodeComponent = (nodeType: string) => {
-        console.log(`Getting component for node type: ${nodeType}`)
+        // console.log(`Getting component for node type: ${nodeType}`)
 
         if (nodeComponents[nodeType]) {
             console.log(`Component for node type ${nodeType} already loaded`)
@@ -333,7 +333,7 @@ export const useFlowStore = defineStore('flowStore', () => {
 
     // Enhanced getNodeDefinition function that can handle both node IDs and typeUIDs
     const getNodeDefinition = (nodeIdOrType: string): INodeDefinition | undefined => {
-        console.log(`Getting node definition for: ${nodeIdOrType}`)
+        // console.log(`Getting node definition for: ${nodeIdOrType}`)
 
         // First, check if this is a direct typeUID
         if (nodeDefinitions[nodeIdOrType]) {

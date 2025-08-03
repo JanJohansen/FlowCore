@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-	import { ref } from "vue"
+	import { ref, onUnmounted } from "vue"
 	import { FlowNodeBase, ICustomNodeContext } from "../../../frontend-types"
 
 	const props = defineProps<{
@@ -43,6 +43,10 @@
 			description: "Dynamically added input"
 		}
 	}, 5000)
+
+	onUnmounted(() => {
+		console.log("Cleaning up MQTT node:", props.context.node.id)
+	})
 </script>
 
 <style scoped>

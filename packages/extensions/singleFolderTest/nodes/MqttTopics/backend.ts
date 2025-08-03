@@ -1,61 +1,107 @@
 import { NodeBackendBaseV1 } from "../../../backend-types"
 import mqtt from "mqtt"
 
+class Debounce {
+    private timer: NodeJS.Timeout | null = null;
+
+    call(callback: () => void, timeout: number) {
+        if (this.timer) {
+            clearTimeout(this.timer)
+        }
+        this.timer = setTimeout(() => {
+            callback()
+            this.timer = null
+        }, timeout)
+    }
+
+    cancel() {
+        if (this.timer) {
+            clearTimeout(this.timer)
+            this.timer = null
+        }
+    }
+}
+
 export default class ObjectNode extends NodeBackendBaseV1 {
     urlPort = "";
     username = "";
     password = "";
     mqtt: mqtt.MqttClient | null = null;
     topics: { [topic: string]: string } = {};
+    private connectDebounce = new Debounce();
 
     setup() {
-        // Implementation for setup
-        console.log("Setting up Object node:", this.context)
+        // Implementation for setup 
+        console.log("Setting up MQTT node:", this.context.node.id)
 
-        this.ins.on(this.context.node.id + ".URL", (value) => {
+        this.ins.on("URL", (value) => {
             console.log("MQTT broker URL and port set to:", value)
             this.urlPort = value
             this.connectToMqttServer()
         })
-        this.ins.on(this.context.node.id + ".Username", (value) => {
+        this.ins.on("Username", (value) => {
             console.log("MQTT broker username set to:", value)
             this.username = value
             this.connectToMqttServer()
         })
-        this.ins.on(this.context.node.id + ".Password", (value) => {
+        this.ins.on("Password", (value) => {
             console.log("MQTT broker password set to:", value)
             this.password = value
             this.connectToMqttServer()
         })
     }
     connectToMqttServer() {
-        console.log("Connecting to MQTT server at:", this.urlPort)
-        console.log("Using username:", this.username)
-        console.log("Using password:", this.password)
-
         if (this.mqtt) {
             this.mqtt.end(() => {
                 console.log("Disconnected from MQTT server")
-                this.connect()
+                this.mqtt = null
             }) // Disconnect previous connection if exists
-        } else this.connect()
+        }
+
+        this.connectDebounce.call(() => {
+            this.connect()
+        }, 1000)
     }
 
     private connect() {
-        this.mqtt = mqtt.connect(this.urlPort, { username: this.username, password: this.password })
+        // Debounce - only connect if all parameters are stable for 1 sec.
+        console.log("Connecting to MQTT server...", this.urlPort, "-", this.username, this.password)
+
+        this.mqtt = mqtt.connect(this.urlPort, { username: this.username, password: this.password, reconnectPeriod: 10000 })
+
         this.mqtt.on("connect", () => {
             console.log("Connected to MQTT server")
+            this.mqtt?.subscribe("#", (err) => {
+                if (err) {
+                    console.error("Failed to subscribe to topics:", err)
+                } else {
+                    console.log("Subscribed to all topics")
+                }
+            })
         })
+
         this.mqtt.on("error", (err) => {
             console.error("MQTT connection error:", err)
         })
+
         this.mqtt.on("message", (topic, message) => {
-            console.log(`Received message on topic ${topic}:`, message.toString())
             // Handle incoming messages here
+            console.log(`MQTT: Received message on topic ${topic}:`, message.toString())
             if (!this.topics[topic]) {
-                this.outs.set(this.context.node.id + ".topics", topic)
-            }
-            this.topics[topic] = message.toString()
+                this.topics[topic] = message.toString()
+                this.outs.set("topics", Object.keys(this.topics))
+            } else this.topics[topic] = message.toString()
         })
     }
+    cleanup() {
+        console.log("Cleaning up MQTT node:", this.context.node.id)
+        this.connectDebounce.cancel()
+        if (this.mqtt) {
+            this.mqtt.end(() => {
+                console.log("Disconnected from MQTT server")
+                this.mqtt = null
+            })
+        }
+    }
 }
+
