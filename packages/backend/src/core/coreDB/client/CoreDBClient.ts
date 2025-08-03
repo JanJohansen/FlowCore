@@ -57,24 +57,34 @@ export class CoreDBClient {
     }
 
     private handleUpdateMessage(message: CoreDBMessage): void {
-        // Handle patch callbacks
-        const patchCallbacks = this.subscriptions.get(message.key! + ':patch')
-        patchCallbacks?.forEach(callback => callback(message.patch))
+        const key = message.key!
 
-        // Handle set callbacks - need to apply patch to local value and send full value
-        const setCallbacks = this.subscriptions.get(message.key! + ':set')
-        if (setCallbacks && setCallbacks.size > 0) {
-            // Get current local value
-            let currentValue = this.localValues.get(message.key!)
+        // Determine if this is a full value or patch update
+        if (message.patch === null && message.value !== undefined) {
+            // This is a full value update (initial value or complete replacement)
+            this.localValues.set(key, message.value)
 
-            // Apply patch to get the new full value
-            const newValue = this.applyPatch(currentValue, message.patch)
+            // Notify set callbacks with the full value
+            const setCallbacks = this.subscriptions.get(key + ':set')
+            setCallbacks?.forEach(callback => callback(message.value))
 
-            // Store the updated value locally
-            this.localValues.set(message.key!, newValue)
+            // For patch callbacks, when receiving a full value, we treat it as the "patch"
+            const patchCallbacks = this.subscriptions.get(key + ':patch')
+            patchCallbacks?.forEach(callback => callback(message.value))
 
-            // Send full value to set callbacks
-            setCallbacks.forEach(callback => callback(newValue))
+        } else if (message.patch !== null && message.value === null) {
+            // This is a patch update
+            const patchCallbacks = this.subscriptions.get(key + ':patch')
+            patchCallbacks?.forEach(callback => callback(message.patch))
+
+            // For set callbacks, apply patch to get full value
+            const setCallbacks = this.subscriptions.get(key + ':set')
+            if (setCallbacks && setCallbacks.size > 0) {
+                const currentValue = this.localValues.get(key)
+                const newValue = this.applyPatch(currentValue, message.patch)
+                this.localValues.set(key, newValue)
+                setCallbacks.forEach(callback => callback(newValue))
+            }
         }
     }
 
@@ -180,6 +190,7 @@ export class CoreDBClient {
 
             if (!this.serverSubscriptions.has(key)) {
                 this.serverSubscriptions.add(key)
+                // Server will send initial full value automatically followed by patches
                 this.sendMessage({
                     cmd: 'onPatch',
                     key
@@ -199,6 +210,7 @@ export class CoreDBClient {
                     const setCallbacks = this.subscriptions.get(key + ':set')
                     if (!setCallbacks || setCallbacks.size === 0) {
                         this.serverSubscriptions.delete(key)
+                        this.localValues.delete(key)
                         this.sendMessage({
                             cmd: 'unsubscribe',
                             key
@@ -225,31 +237,21 @@ export class CoreDBClient {
             if (!this.serverSubscriptions.has(key)) {
                 this.serverSubscriptions.add(key)
 
-                // Get initial value and store it locally
-                this.get(key).then(value => {
-                    this.localValues.set(key, value)
-                    // Call the callback with initial value
-                    callback(value)
-                }).catch(() => {
-                    // If get fails, initialize with undefined
-                    this.localValues.set(key, undefined)
-                })
-
-                // Subscribe to patches
+                // Subscribe to patches - server will send initial full value automatically
                 this.sendMessage({
                     cmd: 'onPatch',
                     key
                 })
-            } else {
-                // If already subscribed, call callback with current local value
-                const currentValue = this.localValues.get(key)
-                if (currentValue !== undefined) {
-                    callback(currentValue)
-                }
             }
         }
 
         callbacks.add(callback)
+
+        // If we already have a local value, call the callback immediately
+        const currentValue = this.localValues.get(key)
+        if (currentValue !== undefined) {
+            callback(currentValue)
+        }
 
         return () => {
             const callbacks = this.subscriptions.get(key + ':set')

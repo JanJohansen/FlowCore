@@ -22,6 +22,7 @@ export class CoreDBWebSocket {
     private wss: WebSocketServer
     private db: CoreDB
     private clientUsers: Map<WebSocket, CoreDBUser> = new Map();
+    private clientSubscriptions: Map<WebSocket, Map<string, () => void>> = new Map(); // Track unsubscribe functions
     private registeredFunctions: Map<string, WebSocket> = new Map(); // Track which client registered which function
     private pendingCalls: Map<number, WebSocket> = new Map(); // Track pending RPC calls
 
@@ -45,6 +46,9 @@ export class CoreDBWebSocket {
 
             // Get client IP
             const ip = req.socket.remoteAddress
+
+            // Initialize subscription tracking for this client
+            this.clientSubscriptions.set(ws, new Map())
 
             // Update connected clients count and IPs
             const currentClients = this.wss.clients.size
@@ -179,14 +183,38 @@ export class CoreDBWebSocket {
         }
 
         const dbUser = this.clientUsers.get(ws)!
-        dbUser.onPatch(message.key!, (patch) => {
-            this.sendMessage(ws, {
-                type: 'update',
-                key: message.key,
-                patch: patch,
-                value: dbUser.get(message.key!)
-            })
+        const clientSubs = this.clientSubscriptions.get(ws)!
+
+        // If already subscribed to this key, don't re-subscribe
+        if (clientSubs.has(message.key!)) {
+            return
+        }
+
+        // Subscribe to patches - the first callback will be the initial value
+        let isFirstCallback = true
+        const unsubscribe = dbUser.onPatch(message.key!, (patch) => {
+            if (isFirstCallback) {
+                // Send initial full value
+                isFirstCallback = false
+                this.sendMessage(ws, {
+                    type: 'update',
+                    key: message.key,
+                    patch: null, // null patch indicates this is the initial full value
+                    value: patch // In onPatch, the first call contains the full initial value
+                })
+            } else {
+                // Send patch updates
+                this.sendMessage(ws, {
+                    type: 'update',
+                    key: message.key,
+                    patch: patch,
+                    value: null // Only send patch, no full value
+                })
+            }
         })
+
+        // Track the subscription for cleanup
+        clientSubs.set(message.key!, unsubscribe)
     }
 
     private handleOnSetCommand(ws: WebSocket, message: WSMessage): void {
@@ -196,14 +224,31 @@ export class CoreDBWebSocket {
         }
 
         const dbUser = this.clientUsers.get(ws)!
-        dbUser.onSet(message.key!, (value) => {
+        const clientSubs = this.clientSubscriptions.get(ws)!
+
+        // If already subscribed to this key, don't re-subscribe
+        if (clientSubs.has(message.key!)) {
+            return
+        }
+
+        // Subscribe to set callbacks - the first callback will be the initial value
+        let isFirstCallback = true
+        const unsubscribe = dbUser.onSet(message.key!, (value) => {
+            if (isFirstCallback) {
+                // Send initial full value
+                isFirstCallback = false
+            }
+            // Always send full value updates for onSet
             this.sendMessage(ws, {
                 type: 'update',
                 key: message.key,
-                patch: null, // No patch for set callbacks
+                patch: null, // null patch indicates this is a full value update
                 value: value
             })
         })
+
+        // Track the subscription for cleanup
+        clientSubs.set(message.key!, unsubscribe)
     }
 
     private handleUnsubscribeCommand(ws: WebSocket, message: WSMessage): void {
@@ -212,8 +257,13 @@ export class CoreDBWebSocket {
             return
         }
 
-        const dbUser = this.clientUsers.get(ws)!
-        dbUser.unsubscribe(message.key)
+        const clientSubs = this.clientSubscriptions.get(ws)!
+        const unsubscribe = clientSubs.get(message.key!)
+
+        if (unsubscribe) {
+            unsubscribe()
+            clientSubs.delete(message.key!)
+        }
     }
 
     // Calls (with return value)
@@ -320,6 +370,16 @@ export class CoreDBWebSocket {
         if (dbUser) {
             dbUser.unsubscribeAll()
             this.clientUsers.delete(ws)
+        }
+
+        // Clean up tracked subscriptions
+        const clientSubs = this.clientSubscriptions.get(ws)
+        if (clientSubs) {
+            // Unsubscribe from all tracked subscriptions
+            for (const unsubscribe of clientSubs.values()) {
+                unsubscribe()
+            }
+            this.clientSubscriptions.delete(ws)
         }
     }
 
