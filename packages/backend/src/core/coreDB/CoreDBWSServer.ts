@@ -5,7 +5,7 @@ import { Server } from 'http'
 const SERVER_STATUS_KEY = 'serverStatus'
 
 interface WSMessage {
-    cmd?: 'set' | 'patch' | 'on' | 'onPatch' | 'onSet' | 'unsubscribe' | 'onCall'
+    cmd?: 'set' | 'patch' | 'onPatch' | 'onSet' | 'unsubscribe' | 'onCall'
     call?: 'get' | 'call'
     type?: 'response' | 'update' | 'callRequest' | 'callResponse'
     id?: number
@@ -67,7 +67,7 @@ export class CoreDBWebSocket {
                 this.cleanupClientSubscriptions(ws)
                 this.cleanupClientRegistrations(ws)
 
-                // Update connected clients count and remove IP
+                // Update connected clients count and remove IP (since its now disconnected!)
                 const currentClients = this.wss.clients.size
                 const clientsObj = this.db.get(SERVER_STATUS_KEY)
                 clientsObj.connected = currentClients
@@ -96,10 +96,6 @@ export class CoreDBWebSocket {
                 case 'patch':
                     // console.log('Received patch command:', message);
                     this.handlePatchCommand(ws, message)
-                    break
-                case 'on':
-                    // console.log('Received subscribe command:', message)
-                    this.handleSubscribeCommand(ws, message)
                     break
                 case 'onPatch':
                     // console.log('Received onPatch subscribe command:', message)
@@ -164,7 +160,7 @@ export class CoreDBWebSocket {
     private handlePatchCommand(ws: WebSocket, message: WSMessage): void {
         if (!message.key || message.patch === undefined) {
             // Commands don't expect returns, so just log the error
-            console.log('ERROR - Missing key or patch')
+            console.warn('ERROR - Missing key or patch')
             return
         }
 
@@ -172,30 +168,13 @@ export class CoreDBWebSocket {
             const dbUser = this.clientUsers.get(ws)!
             dbUser.patch(message.key, message.patch)
         } catch (error) {
-            console.log('ERROR - Failed to patch value:', error)
+            console.warn('ERROR - Failed to patch value:', error)
         }
-    }
-
-    private handleSubscribeCommand(ws: WebSocket, message: WSMessage): void {
-        if (!message.key) {
-            console.log('ERROR - Missing key')
-            return
-        }
-
-        const dbUser = this.clientUsers.get(ws)!
-        dbUser.onPatch(message.key!, (patch) => {
-            this.sendMessage(ws, {
-                type: 'update',
-                key: message.key,
-                patch: patch,
-                value: dbUser.get(message.key!)
-            })
-        })
     }
 
     private handleOnPatchCommand(ws: WebSocket, message: WSMessage): void {
         if (!message.key) {
-            console.log('ERROR - Missing key')
+            console.warn('ERROR - Missing key')
             return
         }
 
@@ -212,7 +191,7 @@ export class CoreDBWebSocket {
 
     private handleOnSetCommand(ws: WebSocket, message: WSMessage): void {
         if (!message.key) {
-            console.log('ERROR - Missing key')
+            console.warn('ERROR - Missing key')
             return
         }
 
