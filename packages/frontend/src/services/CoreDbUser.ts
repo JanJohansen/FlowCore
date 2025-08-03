@@ -16,7 +16,6 @@ export class CoreDbUser extends CoreDBClientUser {
         if (!CoreDbUser.initialized) {
             console.log('Initializing CoreDB client')
 
-
             // Set up transport event handlers
             CoreDbUser.transport.onConnect(() => {
                 console.log('CoreDB store: Transport connected')
@@ -32,6 +31,13 @@ export class CoreDbUser extends CoreDBClientUser {
 
             CoreDbUser.initialized = true
         }
-        return new CoreDBClientUser(CoreDbUser.client!)
+    }
+
+    /**
+     * Get all keys and values from the database
+     * @returns Promise that resolves with all key-value pairs
+     */
+    async getAllKeysAndValues(): Promise<Record<string, any>> {
+        return await this.call('coredb:getAllKeysAndValues')
     }
 }

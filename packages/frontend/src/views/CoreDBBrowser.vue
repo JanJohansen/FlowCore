@@ -16,7 +16,12 @@
 			<div class="win-content">
 				<!-- Left Column - Types List -->
 				<div class="win-sidebar">
-					<div class="win-panel-header">Object Types</div>
+					<div class="win-panel-header">
+						<div class="header-content">
+							<span>Object Types</span>
+							<button @click="loadAllKeys" class="win-button-small">Refresh All</button>
+						</div>
+					</div>
 					<div class="win-list">
 						<div
 							v-for="type in Object.keys(objectTypes)"
@@ -26,6 +31,13 @@
 						>
 							{{ type }}
 						</div>
+						<!-- Add option to view all keys -->
+						<div
+							:class="['win-list-item', { active: selectedType === 'ALL_KEYS' }]"
+							@click="selectedType = 'ALL_KEYS'"
+						>
+							All Keys ({{ allKeysCount }})
+						</div>
 					</div>
 				</div>
 
@@ -33,8 +45,8 @@
 				<div class="win-main-panel">
 					<div class="win-panel-header">
 						<div class="header-content">
-							<span>{{ selectedType ? `Objects of type: ${selectedType}` : "No type selected" }}</span>
-							<div v-if="selectedType" class="search-container">
+							<span>{{ getHeaderText() }}</span>
+							<div v-if="selectedType && selectedType !== 'ALL_KEYS'" class="search-container">
 								<input
 									type="text"
 									v-model="searchQuery"
@@ -45,7 +57,23 @@
 						</div>
 					</div>
 					<div class="win-panel-content">
-						<div v-if="selectedType" class="win-objects-view">
+						<!-- All keys view -->
+						<div v-if="selectedType === 'ALL_KEYS'" class="win-objects-view">
+							<div v-for="(value, key) in allKeysAndValues" :key="key" class="win-key-item">
+								<div class="win-key-line" @click="toggleKeyExpansion(key)">
+									<span class="win-expand-icon" :class="{ expanded: expandedKeys.has(key) }">
+										{{ expandedKeys.has(key) ? "▼" : "▶" }}
+									</span>
+									<span class="win-key-name">{{ key }}</span>
+									<span class="win-key-type">{{ getValueType(value) }}</span>
+								</div>
+								<div v-if="expandedKeys.has(key)" class="win-key-content">
+									<pre class="win-json-content">{{ JSON.stringify(value, null, 2) }}</pre>
+								</div>
+							</div>
+						</div>
+						<!-- Existing type-filtered view -->
+						<div v-else-if="selectedType" class="win-objects-view">
 							<div v-for="(value, id) in filteredObjects" :key="id" class="win-object-item">
 								<div class="win-object-header">{{ id }}</div>
 								<!-- Using FlowNode component instead of inline implementation -->
@@ -132,6 +160,13 @@
 	// Add search functionality
 	const searchQuery = ref("")
 
+	// Add new reactive data for all keys
+	const allKeysAndValues = ref<Record<string, any>>({})
+	const allKeysCount = computed(() => Object.keys(allKeysAndValues.value).length)
+
+	// Add expansion state for keys
+	const expandedKeys = ref<Set<string>>(new Set())
+
 	// Computed property for filtered objects
 	const filteredObjects = computed(() => {
 		if (!searchQuery.value) return typeObjects
@@ -144,6 +179,43 @@
 			return filtered
 		}, {} as typeof typeObjects)
 	})
+
+	// Helper function for header text
+	const getHeaderText = () => {
+		if (selectedType.value === "ALL_KEYS") {
+			return `All Keys (${allKeysCount.value})`
+		}
+		return selectedType.value ? `Objects of type: ${selectedType.value}` : "No type selected"
+	}
+
+	// Method to load all keys
+	const loadAllKeys = async () => {
+		try {
+			const data = await db.getAllKeysAndValues()
+			allKeysAndValues.value = data
+			console.log("Loaded all keys:", Object.keys(data).length)
+		} catch (error) {
+			console.error("Failed to load all keys:", error)
+		}
+	}
+
+	// Method to toggle key expansion
+	const toggleKeyExpansion = (key: string) => {
+		if (expandedKeys.value.has(key)) {
+			expandedKeys.value.delete(key)
+		} else {
+			expandedKeys.value.add(key)
+		}
+	}
+
+	// Helper function to get value type for display
+	const getValueType = (value: any): string => {
+		if (value === null) return "null"
+		if (value === undefined) return "undefined"
+		if (Array.isArray(value)) return `array[${value.length}]`
+		if (typeof value === "object") return "object"
+		return typeof value
+	}
 
 	// Initialize store and get wrapper
 	const db = new CoreDbUser()
@@ -232,6 +304,7 @@
 		if (newIsConnected) {
 			console.log("Connection established, subscribing to object types")
 			subscribeToObjectTypes()
+			loadAllKeys() // Load all keys when connected
 		}
 	})
 
@@ -239,6 +312,7 @@
 		console.log("HomeView mounted")
 		if (CoreDbUser.isConnected) {
 			subscribeToObjectTypes()
+			loadAllKeys() // Also load on mount if already connected
 		}
 	})
 
@@ -376,7 +450,7 @@
 		padding: 10px;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 20px;
+		gap: 4px;
 	}
 
 	.win-object-item {
@@ -465,6 +539,109 @@
 
 	.win-button:hover {
 		background: #106ebe;
+	}
+
+	.win-button-small {
+		background: #0078d4;
+		color: white;
+		border: none;
+		padding: 2px 6px;
+		border-radius: 2px;
+		cursor: pointer;
+		font-size: 11px;
+	}
+
+	.win-button-small:hover {
+		background: #106ebe;
+	}
+
+	.win-updates-panel {
+		background: #333;
+		border: 1px solid #555;
+		height: 200px;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.win-key-item {
+		border-bottom: 1px solid #555;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	.win-key-line {
+		display: flex;
+		align-items: center;
+		padding: 2px 2px;
+		cursor: pointer;
+		user-select: none;
+		background: #2d2d30;
+		border: 1px solid transparent;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	.win-key-line:hover {
+		background: #3e3e42;
+		border-color: #007acc;
+	}
+
+	.win-expand-icon {
+		width: 16px;
+		display: inline-block;
+		text-align: center;
+		margin-right: 12px;
+		color: #cccccc;
+		font-size: 10px;
+		transition: transform 0.2s ease;
+		flex-shrink: 0;
+	}
+
+	.win-expand-icon.expanded {
+		transform: rotate(0deg);
+	}
+
+	.win-key-name {
+		flex: 1;
+		font-family: "Consolas", "Monaco", monospace;
+		font-size: 13px;
+		color: #dcdcaa;
+		margin-right: 12px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		min-width: 0;
+	}
+
+	.win-key-type {
+		font-size: 11px;
+		color: #569cd6;
+		background: rgba(86, 156, 214, 0.1);
+		padding: 3px 8px;
+		border-radius: 3px;
+		font-family: "Consolas", "Monaco", monospace;
+		flex-shrink: 0;
+		margin-left: auto;
+	}
+
+	.win-key-content {
+		background: #1e1e1e;
+		border-top: 1px solid #555;
+		padding: 8px;
+		max-height: 300px;
+		overflow: auto;
+	}
+
+	.win-json-content {
+		margin: 0;
+		font-family: "Consolas", "Monaco", monospace;
+		font-size: 12px;
+		color: #ce9178;
+		line-height: 1.4;
+		background: transparent;
+		border: none;
+		white-space: pre-wrap;
+		word-break: break-all;
 	}
 
 	.win-updates-panel {

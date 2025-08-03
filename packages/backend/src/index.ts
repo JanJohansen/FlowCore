@@ -34,6 +34,11 @@ const server = createServer(app)
 const db = CoreDB.loadFromFile(dbFile)
 const wsServer = new CoreDBWebSocket(server, db)
 
+// Register built-in RPC handlers
+db.onCall('coredb:getAllKeysAndValues', () => {
+    return db.getAllKeysAndValues()
+})
+
 app.use(cors())
 app.use(express.json())
 

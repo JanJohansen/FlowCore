@@ -740,6 +740,18 @@ export class CoreDB {
     getAllData(): IterableIterator<[string, any]> {
         return this.data.entries()
     }
+
+    /**
+     * Get all keys and values from the database
+     * @returns Object containing all key-value pairs
+     */
+    getAllKeysAndValues(): Record<string, any> {
+        const result: Record<string, any> = {}
+        for (const [key, value] of this.data.entries()) {
+            result[key] = value
+        }
+        return result
+    }
 }
 
 /**
@@ -839,6 +851,14 @@ export class CoreDBUser {
      */
     async call(key: string, ...args: any[]): Promise<any> {
         return await this.db.call(key, ...args)
+    }
+
+    /**
+     * Get all keys and values from the database
+     * @returns Promise that resolves with all key-value pairs
+     */
+    async getAllKeysAndValues(): Promise<Record<string, any>> {
+        return await this.call('coredb:getAllKeysAndValues')
     }
 
     /**
