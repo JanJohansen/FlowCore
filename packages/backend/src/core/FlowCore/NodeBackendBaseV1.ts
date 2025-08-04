@@ -10,12 +10,16 @@ export class NodeBackendBaseV1 {
         this.context = context
     }
 
-    on = (propName: string, cb: (val: any) => void) => {
+    onSet = (propName: string, cb: (val: any) => void) => {
         this.dbUser.onSet(this.context.node.id + "." + propName, cb)
     }
 
+    set = (propName: string, value: any) => {
+        this.dbUser.set(this.context.node.id + "." + propName, value)
+    }
+
     ins = {
-        on: (inputName: string, cb: (val: any) => void) => {
+        onSet: (inputName: string, cb: (val: any) => void) => {
             this.dbUser.onSet(this.context.node.id + ".ins." + inputName, cb)
         }
     }

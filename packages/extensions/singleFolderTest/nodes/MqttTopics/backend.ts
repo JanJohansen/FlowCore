@@ -26,6 +26,7 @@ export default class ObjectNode extends NodeBackendBaseV1 {
     urlPort = "";
     username = "";
     password = "";
+    rootTopic = "";
     mqtt: mqtt.MqttClient | null = null;
     topics: { [topic: string]: string } = {};
     private connectDebounce = new Debounce();
@@ -34,19 +35,24 @@ export default class ObjectNode extends NodeBackendBaseV1 {
         // Implementation for setup 
         console.log("Setting up MQTT node:", this.context.node.id)
 
-        this.ins.on("URL", (value) => {
+        this.ins.onSet("URL", (value) => {
             console.log("MQTT broker URL and port set to:", value)
             this.urlPort = value
             this.connectToMqttServer()
         })
-        this.ins.on("Username", (value) => {
+        this.ins.onSet("Username", (value) => {
             console.log("MQTT broker username set to:", value)
             this.username = value
             this.connectToMqttServer()
         })
-        this.ins.on("Password", (value) => {
+        this.ins.onSet("Password", (value) => {
             console.log("MQTT broker password set to:", value)
             this.password = value
+            this.connectToMqttServer()
+        })
+        this.ins.onSet("RootTopic", (value) => {
+            console.log("MQTT broker root topic set to:", value)
+            this.rootTopic = value
             this.connectToMqttServer()
         })
     }
@@ -71,7 +77,10 @@ export default class ObjectNode extends NodeBackendBaseV1 {
 
         this.mqtt.on("connect", () => {
             console.log("Connected to MQTT server")
-            this.mqtt?.subscribe("#", (err) => {
+            let topic
+            if (this.rootTopic && this.rootTopic !== "") topic = this.rootTopic + "/#"
+            else topic = "#"
+            this.mqtt?.subscribe(topic, (err) => {
                 if (err) {
                     console.error("Failed to subscribe to topics:", err)
                 } else {
@@ -99,7 +108,9 @@ export default class ObjectNode extends NodeBackendBaseV1 {
 
             if (!this.topics[topic]) {
                 this.topics[topic] = parsedMessage
-                this.outs.set("topics", Object.keys(this.topics))
+
+                this.set("topics", Object.keys(this.topics))
+
             } else this.topics[topic] = parsedMessage
         })
     }

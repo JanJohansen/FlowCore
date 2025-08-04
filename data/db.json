@@ -103,7 +103,12 @@
             "Password": {
               "value": "jan190374"
             },
-            "NEW_INPUT": {}
+            "RootTopic": {
+              "value": "zigbee2mqtt"
+            },
+            "topics": {
+              "value": "zigbee2mqtt/StudioTempHum"
+            }
           },
           "outs": {}
         }

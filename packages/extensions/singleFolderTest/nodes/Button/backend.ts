@@ -12,7 +12,7 @@ export default class ButtonNode extends NodeBackendBaseV1 {
     setup() {
         console.log("Setting up ButtonNode:", this.context)
 
-        this.ins.on("pressed", (val: boolean) => {
+        this.ins.onSet("pressed", (val: boolean) => {
             console.log("Button pressed:", val)
             if (val === true) {
                 this.handlePressed()

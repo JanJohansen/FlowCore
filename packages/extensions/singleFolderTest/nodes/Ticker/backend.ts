@@ -8,7 +8,7 @@ export default class Node extends NodeBackendBaseV1 {
 
         let count = 0
 
-        this.ins.on("interval", (interval: number) => {
+        this.ins.onSet("interval", (interval: number) => {
             console.log("Interval changed:", interval)
             if (interval) {
                 if (this.timer) {

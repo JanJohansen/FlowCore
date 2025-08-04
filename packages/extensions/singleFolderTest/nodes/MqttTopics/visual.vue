@@ -34,15 +34,34 @@
 		topics.value = val
 	})
 
-	// props.context.
-	setTimeout(() => {
-		console.log("Adding new input port to:", props.context.nodeDefinition)
-		// Add new input
-		props.context.nodeDefinition.ins!["NEW_INPUT"] = {
-			type: "string",
-			description: "Dynamically added input"
-		}
-	}, 5000)
+	// Update node definition with new topics
+	props.context.nodeDefinition.ins!["topic_1"] = {
+		type: "enum",
+		description: "MQTT topic for output 1",
+		options: topics,
+		default: ""
+	}
+	props.context.nodeDefinition.ins!["topic_1"] = {
+		type: "enum",
+		description: "MQTT topic for output 1",
+		options: topics,
+		default: ""
+	}
+
+	// watchEffect(() => {
+	//     if (props.context.nodeDefinition.ins.topic_1.) {
+	//         props.context.nodeDefinition.ins["topic_1"].options = topics.value
+	//     }
+
+	// // props.context.
+	// setTimeout(() => {
+	// 	console.log("Adding new input port to:", props.context.nodeDefinition)
+	// 	// Add new input
+	// 	props.context.nodeDefinition.ins!["NEW_INPUT"] = {
+	// 		type: "string",
+	// 		description: "Dynamically added input"
+	// 	}
+	// }, 5000)
 
 	onUnmounted(() => {
 		console.log("Cleaning up MQTT node:", props.context.node.id)

@@ -23,6 +23,11 @@ export const nodeDefinition: INodeDefinition = {
             type: "string",
             description: "MQTT broker password"
         },
+        RootTopic: {
+            type: "string",
+            description: "Root topic for MQTT subscriptions",
+            default: "#"
+        }
     },
     outs: {}
 }
