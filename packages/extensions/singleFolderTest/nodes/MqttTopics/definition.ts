@@ -9,25 +9,26 @@ export const nodeDefinition: INodeDefinition = {
     description: "Displays object data in a structured format",
     company: "Flow System",
     license: "MIT",
-    ins: {
-        URL: {
+    config: {
+        url: {
             type: "string",
             description: "MQTT broker URL and port",
             default: "mqtt://localhost:1883"
         },
-        Username: {
+        username: {
             type: "string",
             description: "MQTT broker username"
         },
-        Password: {
+        password: {
             type: "string",
             description: "MQTT broker password"
         },
-        RootTopic: {
+        rootTopic: {
             type: "string",
             description: "Root topic for MQTT subscriptions",
             default: "#"
         }
     },
+    ins: {},
     outs: {}
 }

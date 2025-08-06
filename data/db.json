@@ -82,35 +82,21 @@
         }
       },
       {
-        "id": "com.flow.MqttTopics_1754141232565",
+        "id": "com.flow.MqttTopics_1754344045869",
         "typeUID": "com.flow.MqttTopics",
         "position": {
-          "x": 520,
-          "y": 80
+          "x": 580,
+          "y": 180
         },
         "size": {
           "width": 200,
           "height": 200
         },
         "config": {
-          "ins": {
-            "URL": {
-              "value": "mqtt://192.168.1.124:1883"
-            },
-            "Username": {
-              "value": "MiX"
-            },
-            "Password": {
-              "value": "jan190374"
-            },
-            "RootTopic": {
-              "value": "zigbee2mqtt"
-            },
-            "topics": {
-              "value": "zigbee2mqtt/StudioTempHum"
-            }
-          },
-          "outs": {}
+          "url": "mqtt://192.168.1.124:1883",
+          "username": "MiX",
+          "password": "jan190374",
+          "rootTopic": "zigbee2mqtt"
         }
       }
     ],

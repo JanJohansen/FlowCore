@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, onUnmounted } from "vue"
+	import { ref, onUnmounted, watchEffect } from "vue"
 	import { FlowNodeBase, ICustomNodeContext } from "../../../frontend-types"
 
 	const props = defineProps<{
@@ -35,18 +35,21 @@
 	})
 
 	// Update node definition with new topics
-	props.context.nodeDefinition.ins!["topic_1"] = {
+	props.context.nodeDefinition.config!["topic_1"] = {
 		type: "enum",
 		description: "MQTT topic for output 1",
 		options: topics,
 		default: ""
 	}
-	props.context.nodeDefinition.ins!["topic_1"] = {
-		type: "enum",
-		description: "MQTT topic for output 1",
-		options: topics,
-		default: ""
-	}
+	// watchEffect(() => {
+	//     if (props.context.node.config nodeDefinition.config.topic_1 != "") {
+	//         props.context.nodeDefinition.config.topic_2 = {
+	//             type: "enum",
+	//             description: "MQTT topic for output 1",
+	//             options: topics,
+	//             default: ""
+	//         }
+	//     })
 
 	// watchEffect(() => {
 	//     if (props.context.nodeDefinition.ins.topic_1.) {

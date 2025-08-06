@@ -28,6 +28,7 @@ export interface INodeDefinition {
     author?: string
     company?: string
     license?: string
+    config?: { [inputName: string]: stringNodeIO | numberNodeIO | booleanNodeIO | enumNodeIO | objectNodeIO | arrayNodeIO | anyNodeIO }
     ins?: { [inputName: string]: stringNodeIO | numberNodeIO | booleanNodeIO | enumNodeIO | objectNodeIO | arrayNodeIO | anyNodeIO }
     outs?: { [outputName: string]: stringNodeIO | numberNodeIO | booleanNodeIO | enumNodeIO | objectNodeIO | arrayNodeIO | anyNodeIO }
 }
@@ -118,10 +119,7 @@ export interface IFlowNodeModel {
         width: number
         height: number
     }
-    config: {
-        ins: { [inputName: string]: { value: any } }
-        outs?: { [outputName: string]: { value: any } }
-    }
+    config: { [configName: string]: any }
 }
 
 export interface IFlowConnection {

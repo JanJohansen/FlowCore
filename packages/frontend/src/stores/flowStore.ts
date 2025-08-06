@@ -96,8 +96,6 @@ export const useFlowStore = defineStore('flowStore', () => {
                 height: NODE_WIDTH
             },
             config: {
-                ins: {},
-                outs: {}
             }
         }
 
@@ -458,24 +456,7 @@ export const useFlowStore = defineStore('flowStore', () => {
         const node = flowState.nodes.find(n => n.id === nodeId)
         if (!node) return
 
-        // Initialize config.ins if it doesn't exist
-        if (!node.config) {
-            node.config = { ins: {} }
-        } else if (!node.config.ins) {
-            node.config.ins = {}
-        }
-
-        // Update input values
-        Object.entries(inputValues).forEach(([key, value]) => {
-            node.config.ins[key] = { value }
-        })
-
-        // Remove any inputs that are not in the inputValues
-        Object.keys(node.config.ins).forEach(key => {
-            if (!(key in inputValues)) {
-                delete node.config.ins[key]
-            }
-        })
+        node.config = inputValues
     }
 
     // ===== Initialize =====

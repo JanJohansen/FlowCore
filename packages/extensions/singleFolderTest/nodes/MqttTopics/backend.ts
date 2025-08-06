@@ -23,10 +23,11 @@ class Debounce {
 }
 
 export default class ObjectNode extends NodeBackendBaseV1 {
-    urlPort = "";
+    url = "";
     username = "";
     password = "";
     rootTopic = "";
+
     mqtt: mqtt.MqttClient | null = null;
     topics: { [topic: string]: string } = {};
     private connectDebounce = new Debounce();
@@ -35,26 +36,12 @@ export default class ObjectNode extends NodeBackendBaseV1 {
         // Implementation for setup 
         console.log("Setting up MQTT node:", this.context.node.id)
 
-        this.ins.onSet("URL", (value) => {
-            console.log("MQTT broker URL and port set to:", value)
-            this.urlPort = value
-            this.connectToMqttServer()
-        })
-        this.ins.onSet("Username", (value) => {
-            console.log("MQTT broker username set to:", value)
-            this.username = value
-            this.connectToMqttServer()
-        })
-        this.ins.onSet("Password", (value) => {
-            console.log("MQTT broker password set to:", value)
-            this.password = value
-            this.connectToMqttServer()
-        })
-        this.ins.onSet("RootTopic", (value) => {
-            console.log("MQTT broker root topic set to:", value)
-            this.rootTopic = value
-            this.connectToMqttServer()
-        })
+        this.url = this.context.node.config?.url || "mqtt://localhost:1883"
+        this.username = this.context.node.config?.username || "guest"
+        this.password = this.context.node.config?.password || "guest"
+        this.rootTopic = this.context.node.config?.rootTopic || "#"
+
+        this.connectToMqttServer()
     }
     connectToMqttServer() {
         if (this.mqtt) {
@@ -71,9 +58,9 @@ export default class ObjectNode extends NodeBackendBaseV1 {
 
     private connect() {
         // Debounce - only connect if all parameters are stable for 1 sec.
-        console.log("Connecting to MQTT server...", this.urlPort, "-", this.username, this.password)
+        console.log("Connecting to MQTT server...", this.url, "-", this.username, this.password)
 
-        this.mqtt = mqtt.connect(this.urlPort, { username: this.username, password: this.password, reconnectPeriod: 10000 })
+        this.mqtt = mqtt.connect(this.url, { username: this.username, password: this.password, reconnectPeriod: 10000 })
 
         this.mqtt.on("connect", () => {
             console.log("Connected to MQTT server")

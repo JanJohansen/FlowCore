@@ -238,7 +238,7 @@ export class FlowCore {
                 global: this.globalFlowContext,
                 flow: this.flowContexts[flowId],
                 type: this.typeContexts[node.typeUID],
-                node: { id: node.id }
+                node: node
             }
             // Create node
             const instance = new NodeClass(context)

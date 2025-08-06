@@ -31,10 +31,7 @@ export interface IFlowNodeModel {
     data: Record<string, any>
     inputs?: Record<string, any>
     outputs?: Record<string, any>
-    config?: {
-        ins?: Record<string, { value: any }>
-        outs?: Record<string, any>
-    }
+    config?: Record<string, any>
 }
 
 export interface IFlowConnection {
@@ -53,7 +50,7 @@ export interface IBackendBaseNodeContext {
     global: any
     flow: any
     type: any
-    node: { id: string }
+    node: IFlowNodeModel
 }
 
 export interface ISetupContext {
