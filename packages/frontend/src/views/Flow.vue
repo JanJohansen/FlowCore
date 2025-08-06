@@ -4,8 +4,6 @@
 			<div class="header-content">
 				<h1>Flow Editor</h1>
 				<div class="flow-actions">
-					<testNodeUI msg="Test Node UI" />
-
 					<button class="action-button" title="Save" @click="flowStore.saveFlow">
 						<i class="fa fa-save"></i>
 						Save
