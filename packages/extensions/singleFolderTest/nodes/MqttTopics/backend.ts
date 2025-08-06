@@ -32,6 +32,10 @@ export default class ObjectNode extends NodeBackendBaseV1 {
     topics: { [topic: string]: string } = {};
     private connectDebounce = new Debounce();
 
+    inputs = this.context.node.config?.inputs || [];
+    outputs = this.context.node.config?.outputs || [];
+
+
     setup() {
         // Implementation for setup 
         console.log("Setting up MQTT node:", this.context.node.id)
@@ -93,12 +97,20 @@ export default class ObjectNode extends NodeBackendBaseV1 {
 
             console.log(`MQTT: Received message on topic ${topic}:`, parsedMessage)
 
+            // Store the topic and parsed message
             if (!this.topics[topic]) {
+                // If the topic is not already in the topics object, add it
                 this.topics[topic] = parsedMessage
 
                 this.set("topics", Object.keys(this.topics))
 
             } else this.topics[topic] = parsedMessage
+
+            // Update the node's outputs with the new topic and message
+            if (this.outputs.includes(topic)) {
+                console
+                this.outs.set(topic.split(this.rootTopic + "/")[1] || topic, parsedMessage)
+            }
         })
     }
     cleanup() {

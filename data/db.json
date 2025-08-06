@@ -69,8 +69,8 @@
         "id": "dk.johansenweb.core.graphNodeV1_1753570729261",
         "typeUID": "dk.johansenweb.core.graphNodeV1",
         "position": {
-          "x": 820,
-          "y": 80
+          "x": 280,
+          "y": 400
         },
         "size": {
           "width": 200,
@@ -97,8 +97,41 @@
           "username": "MiX",
           "password": "jan190374",
           "rootTopic": "zigbee2mqtt",
-          "topic_1": "zigbee2mqtt/OfficeTestButton/action"
+          "inputs": [
+            "zigbee2mqtt/OfficeTestButton/action"
+          ],
+          "topic_1": "zigbee2mqtt/bridge/state",
+          "outputs": [
+            "zigbee2mqtt/OfficeTestButton/action",
+            "zigbee2mqtt/StudioTempHum"
+          ]
         }
+      },
+      {
+        "id": "com.flow.output_1754510097268",
+        "typeUID": "com.flow.output",
+        "position": {
+          "x": 960,
+          "y": 120
+        },
+        "size": {
+          "width": 200,
+          "height": 200
+        },
+        "config": {}
+      },
+      {
+        "id": "com.flow.output_1754510105982",
+        "typeUID": "com.flow.output",
+        "position": {
+          "x": 960,
+          "y": 280
+        },
+        "size": {
+          "width": 200,
+          "height": 200
+        },
+        "config": {}
       }
     ],
     "connections": [
@@ -115,12 +148,26 @@
         "sourcePortId": "_log",
         "targetNodeId": "com.flow.output_1748987420503",
         "targetPortId": "in1"
+      },
+      {
+        "id": "conn_1754510100335",
+        "sourceNodeId": "com.flow.MqttTopics_1754344045869",
+        "sourcePortId": "OfficeTestButton/action",
+        "targetNodeId": "com.flow.output_1754510097268",
+        "targetPortId": "in1"
+      },
+      {
+        "id": "conn_1754510108983",
+        "sourceNodeId": "com.flow.MqttTopics_1754344045869",
+        "sourcePortId": "StudioTempHum",
+        "targetNodeId": "com.flow.output_1754510105982",
+        "targetPortId": "in1"
       }
     ],
-    "zoom": 0.7818712314920818,
+    "zoom": 0.7510623853050804,
     "pan": {
-      "x": -388.2669771419529,
-      "y": 8.291869818560258
+      "x": -419.25777866946896,
+      "y": -74.0555005182544
     },
     "id": "id_1748987363886_no6fs3gr3",
     "path": "Test_1",

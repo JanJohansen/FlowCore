@@ -27,6 +27,16 @@ export const nodeDefinition: INodeDefinition = {
             type: "string",
             description: "Root topic for MQTT subscriptions",
             default: "#"
+        },
+        inputs: {
+            type: "enumArray",
+            description: "MQTT topics the node will set if an input is set.",
+            options: []
+        },
+        outputs: {
+            type: "enumArray",
+            description: "MQTT topics the node will provide as outputs.",
+            options: []
         }
     },
     ins: {},

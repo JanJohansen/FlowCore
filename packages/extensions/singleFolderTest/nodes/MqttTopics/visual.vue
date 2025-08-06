@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, onUnmounted, watchEffect } from "vue"
+	import { ref, onUnmounted, watch } from "vue"
 	import { FlowNodeBase, ICustomNodeContext } from "../../../frontend-types"
 
 	const props = defineProps<{
@@ -35,36 +35,39 @@
 	})
 
 	// Update node definition with new topics
-	props.context.nodeDefinition.config!["topic_1"] = {
-		type: "enum",
-		description: "MQTT topic for output 1",
-		options: topics,
-		default: ""
+	props.context.nodeDefinition.config!["inputs"] = {
+		type: "enumArray",
+		options: topics
 	}
-	// watchEffect(() => {
-	//     if (props.context.node.config nodeDefinition.config.topic_1 != "") {
-	//         props.context.nodeDefinition.config.topic_2 = {
-	//             type: "enum",
-	//             description: "MQTT topic for output 1",
-	//             options: topics,
-	//             default: ""
-	//         }
-	//     })
+	// Update node definition with new topics
+	props.context.nodeDefinition.config!["outputs"] = {
+		type: "enumArray",
+		options: topics
+	}
 
-	// watchEffect(() => {
-	//     if (props.context.nodeDefinition.ins.topic_1.) {
-	//         props.context.nodeDefinition.ins["topic_1"].options = topics.value
-	//     }
+	watch(props.context.nodeDefinition.config?.inputs, () => {
+		console.log("Inputs updated:", props.context.nodeDefinition.config?.inputs)
+		props.context.node.config.inputs.forEach((topic: string) => {
+			console.log("Updating input:", topic)
+			const inName = topic.split(props.context.node.config.rootTopic + "/")[1] || topic
+			props.context.nodeDefinition.ins![inName] = {
+				type: "any",
+				description: "Dynamic input based on selected MQTT topics"
+			}
+		})
+	})
 
-	// // props.context.
-	// setTimeout(() => {
-	// 	console.log("Adding new input port to:", props.context.nodeDefinition)
-	// 	// Add new input
-	// 	props.context.nodeDefinition.ins!["NEW_INPUT"] = {
-	// 		type: "string",
-	// 		description: "Dynamically added input"
-	// 	}
-	// }, 5000)
+	watch(props.context.nodeDefinition.config?.outputs, () => {
+		console.log("Outputs updated:", props.context.nodeDefinition.config?.outputs)
+		props.context.node.config.outputs.forEach((topic: string) => {
+			console.log("Updating output:", topic)
+			const outName = topic.split(props.context.node.config.rootTopic + "/")[1] || topic
+			props.context.nodeDefinition.outs![outName] = {
+				type: "any",
+				description: "Dynamic output based on selected MQTT topics"
+			}
+		})
+	})
 
 	onUnmounted(() => {
 		console.log("Cleaning up MQTT node:", props.context.node.id)

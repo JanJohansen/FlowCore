@@ -30,6 +30,21 @@
 								{{ option }}
 							</option>
 						</select>
+						<!-- EnumArray selector (multiple checkboxes) -->
+						<div v-else-if="input.valueType === 'enumArray'" class="enum-array-selector">
+							<div v-for="option in input.enum" :key="option" class="enum-option">
+								<input
+									:id="`${key}_${option}`"
+									type="checkbox"
+									:value="option"
+									v-model="localInputValues[key]"
+									class="enum-checkbox"
+								/>
+								<label :for="`${key}_${option}`" class="enum-option-label">
+									{{ option }}
+								</label>
+							</div>
+						</div>
 						<!-- Number input with optional slider -->
 						<div v-else-if="input.valueType === 'number'" class="number-input-group">
 							<input
@@ -103,7 +118,14 @@
 <script setup lang="ts">
 	import { ref, computed, watch } from "vue"
 	import { useFlowStore } from "../../stores/flowStore"
-	import type { INodeDefinition, IFlowNodeModel, numberNodeIO, enumNodeIO, booleanNodeIO } from "./types"
+	import type {
+		INodeDefinition,
+		IFlowNodeModel,
+		numberNodeIO,
+		enumNodeIO,
+		enumArrayNodeIO,
+		booleanNodeIO
+	} from "./types"
 
 	interface Props {
 		node: IFlowNodeModel
@@ -143,6 +165,12 @@
 						enum: (input as enumNodeIO).options || []
 					}
 					break
+				case "enumArray":
+					acc[key] = {
+						...baseInput,
+						enum: (input as enumArrayNodeIO).options || []
+					}
+					break
 				case "boolean":
 					acc[key] = {
 						...baseInput,
@@ -168,10 +196,17 @@
 			isValidJson.value = {}
 			Object.keys(nodeInputs.value).forEach((key) => {
 				const value = newNode.config[key]
-				localInputValues.value[key] = value
+				const inputType = nodeInputs.value[key].valueType
+
+				// Initialize enumArray with empty array if no value is set
+				if (inputType === "enumArray") {
+					localInputValues.value[key] = Array.isArray(value) ? value : []
+				} else {
+					localInputValues.value[key] = value
+				}
 
 				// Validate JSON for unknown types
-				if (nodeInputs.value[key].valueType === "unknown" || nodeInputs.value[key].valueType === "object") {
+				if (inputType === "unknown" || inputType === "object") {
 					try {
 						if (typeof value === "string") {
 							JSON.parse(value)
@@ -254,6 +289,16 @@
 					} else if (input.enum && input.enum.length > 0) {
 						// Fall back to first option if invalid
 						processedValues[key] = input.enum[0]
+					}
+					break
+
+				case "enumArray":
+					// Ensure array of valid enum values
+					if (Array.isArray(rawValue)) {
+						const validValues = rawValue.filter((value) => input.enum && input.enum.includes(value))
+						processedValues[key] = validValues
+					} else {
+						processedValues[key] = []
 					}
 					break
 
@@ -345,6 +390,42 @@
 	.enum-select:focus {
 		border-color: var(--primary-color);
 		outline: none;
+	}
+
+	.enum-array-selector {
+		border: 1px solid var(--border-color);
+		border-radius: 4px;
+		padding: 0.75rem;
+		background-color: var(--bg-secondary);
+		max-height: 200px;
+		overflow-y: auto;
+	}
+
+	.enum-option {
+		display: flex;
+		align-items: center;
+		margin-bottom: 0.5rem;
+		gap: 0.5rem;
+	}
+
+	.enum-option:last-child {
+		margin-bottom: 0;
+	}
+
+	.enum-checkbox {
+		margin: 0;
+		accent-color: var(--primary-color);
+	}
+
+	.enum-option-label {
+		color: var(--text-primary);
+		cursor: pointer;
+		margin: 0;
+		font-weight: normal;
+	}
+
+	.enum-option-label:hover {
+		color: var(--primary-color);
 	}
 
 	.number-input-group {

@@ -40,7 +40,7 @@ export interface stringNodeIO {
     value?: string
 }
 
-interface numberNodeIO {
+export interface numberNodeIO {
     type: "number"
     description?: string
     default?: number
@@ -51,7 +51,7 @@ interface numberNodeIO {
     useSlider?: boolean
 }
 
-interface booleanNodeIO {
+export interface booleanNodeIO {
     type: "boolean"
     description?: string
     default?: boolean
@@ -59,7 +59,7 @@ interface booleanNodeIO {
     useCheckbox?: boolean
 }
 
-interface enumNodeIO {
+export interface enumNodeIO {
     type: "enum"
     options: string[]
     description?: string
@@ -67,7 +67,7 @@ interface enumNodeIO {
     value?: string
 }
 
-interface enumArrayNodeIO {
+export interface enumArrayNodeIO {
     type: "enumArray"
     options: string[]
     description?: string
