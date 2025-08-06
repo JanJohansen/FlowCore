@@ -14,12 +14,16 @@
 	:root {
 		--bg-primary: #1a1a1a;
 		--bg-secondary: #2d2d2d;
+		--bg-tertiary: #404040;
 		--text-primary: #ffffff;
 		--text-secondary: #cccccc;
 		--text-tertiary: #999999;
 		--border-color: #404040;
+		--primary-color: #3b82f6;
+		--primary-color-dark: #2563eb;
 		--success-color: #10b981;
 		--error-color: #ef4444;
+		--error-bg: rgba(239, 68, 68, 0.1);
 		--warning-color: #f59e0b;
 		--info-color: #3b82f6;
 	}
