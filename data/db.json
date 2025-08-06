@@ -96,7 +96,8 @@
           "url": "mqtt://192.168.1.124:1883",
           "username": "MiX",
           "password": "jan190374",
-          "rootTopic": "zigbee2mqtt"
+          "rootTopic": "zigbee2mqtt",
+          "topic_1": "zigbee2mqtt/OfficeTestButton/action"
         }
       }
     ],

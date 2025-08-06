@@ -28,9 +28,9 @@ export interface INodeDefinition {
     author?: string
     company?: string
     license?: string
-    config?: { [inputName: string]: stringNodeIO | numberNodeIO | booleanNodeIO | enumNodeIO | objectNodeIO | arrayNodeIO | anyNodeIO }
-    ins?: { [inputName: string]: stringNodeIO | numberNodeIO | booleanNodeIO | enumNodeIO | objectNodeIO | arrayNodeIO | anyNodeIO }
-    outs?: { [outputName: string]: stringNodeIO | numberNodeIO | booleanNodeIO | enumNodeIO | objectNodeIO | arrayNodeIO | anyNodeIO }
+    config?: { [inputName: string]: stringNodeIO | numberNodeIO | booleanNodeIO | enumNodeIO | enumArrayNodeIO | objectNodeIO | arrayNodeIO | anyNodeIO }
+    ins?: { [inputName: string]: stringNodeIO | numberNodeIO | booleanNodeIO | enumNodeIO | enumArrayNodeIO | objectNodeIO | arrayNodeIO | anyNodeIO }
+    outs?: { [outputName: string]: stringNodeIO | numberNodeIO | booleanNodeIO | enumNodeIO | enumArrayNodeIO | objectNodeIO | arrayNodeIO | anyNodeIO }
 }
 
 export interface stringNodeIO {
@@ -66,6 +66,15 @@ interface enumNodeIO {
     default?: string
     value?: string
 }
+
+interface enumArrayNodeIO {
+    type: "enumArray"
+    options: string[]
+    description?: string
+    default?: string
+    value?: string[]
+}
+
 
 interface objectNodeIO {
     type: "object"
