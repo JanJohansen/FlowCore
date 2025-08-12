@@ -7,7 +7,15 @@
 				<span class="item-name">{{ itemName }}</span>
 			</div>
 			<div class="item-actions">
-				<button class="item-action-btn" @click="handleDelete" title="Delete">
+				<template v-if="isFolder">
+					<button class="item-action-btn" @click.stop="handleCreateFlow" title="New Flow">
+						<i class="fa fa-file"></i>
+					</button>
+					<button class="item-action-btn" @click.stop="handleCreateFolder" title="New Folder">
+						<i class="fa fa-folder"></i>
+					</button>
+				</template>
+				<button class="item-action-btn" @click.stop="handleDelete" title="Delete">
 					<i class="fa fa-trash"></i>
 				</button>
 			</div>
@@ -15,12 +23,15 @@
 
 		<div v-if="isFolder && expanded" class="item-children">
 			<FlowsTreeItem
-				v-for="child in item.folder"
+				v-for="child in children"
 				:key="child.type === 'folder' ? child.folderName : child.flowId"
 				:item="child"
 				:selected-flow-id="selectedFlowId"
+				:base-path="nextBasePath"
 				@select="$emit('select', $event)"
 				@delete="handleChildDelete"
+				@create-folder="handleChildCreateFolder"
+				@create-flow="handleChildCreateFlow"
 			/>
 		</div>
 	</div>
@@ -33,19 +44,29 @@
 	const props = defineProps<{
 		item: IFlowTreeFolder | IFlowTreeModel
 		selectedFlowId: string | null
+		basePath?: string[]
 	}>()
 
 	const emit = defineEmits<{
 		(e: "select", flowId: string): void
 		(e: "delete", path: string[]): void
+		(e: "create-folder", path: string[]): void
+		(e: "create-flow", path: string[]): void
 	}>()
 
 	const expanded = ref(true)
 
 	const isFolder = computed(() => props.item.type === "folder")
-	const itemName = computed(() =>
-		isFolder.value ? (props.item as IFlowTreeFolder).folderName : (props.item as IFlowTreeModel).flowId
-	)
+	const itemName = computed(() => {
+		if (isFolder.value) return (props.item as IFlowTreeFolder).folderName
+		const flow = props.item as IFlowTreeModel
+		const id = flow.flowId || ""
+		const parts = id.split("/").filter(Boolean)
+		return parts.length ? parts[parts.length - 1] : id
+	})
+	const children = computed(() => (isFolder.value ? (props.item as IFlowTreeFolder).folder : []))
+	const basePathArr = computed(() => props.basePath ?? [])
+	const nextBasePath = computed(() => [...basePathArr.value, itemName.value])
 
 	const icon = computed(() => (isFolder.value ? "fa fa-folder" : "fa fa-file"))
 
@@ -65,12 +86,28 @@
 	}
 
 	const handleDelete = () => {
-		emit("delete", [itemName.value])
+		emit("delete", [...(props.basePath || []), itemName.value])
 	}
 
 	const handleChildDelete = (childPath: string[]) => {
-		emit("delete", [itemName.value, ...childPath])
+		emit("delete", [...(props.basePath || []), itemName.value, ...childPath])
 		console.log("Deleting child:", childPath)
+	}
+
+	const handleCreateFolder = () => {
+		emit("create-folder", [...(props.basePath || []), itemName.value])
+	}
+
+	const handleCreateFlow = () => {
+		emit("create-flow", [...(props.basePath || []), itemName.value])
+	}
+
+	const handleChildCreateFolder = (childPath: string[]) => {
+		emit("create-folder", [...(props.basePath || []), itemName.value, ...childPath])
+	}
+
+	const handleChildCreateFlow = (childPath: string[]) => {
+		emit("create-flow", [...(props.basePath || []), itemName.value, ...childPath])
 	}
 </script>
 
