@@ -77,7 +77,7 @@
 <script setup lang="ts">
 	import { computed, ref, onMounted, watch, onUnmounted, nextTick } from "vue"
 	import { useFlowStore } from "../../stores/flowStore"
-	import type { INodeDefinition, IFlowNodeModel } from "./types"
+	import type { ICustomNodeContext } from "./types"
 	import { GRID_SIZE, NODE_WIDTH } from "./constants"
 	import PropertyEditor from "./PropertyEditor.vue"
 
@@ -418,13 +418,32 @@
 	onUnmounted(() => {
 		window.removeEventListener("resize", updatePortPositions)
 	})
+
+	// Observe DOM size changes (e.g., long labels expanding width) without causing reactive loops
+	let resizeObserver: ResizeObserver | null = null
+	onMounted(() => {
+		nextTick(() => {
+			const nodeElement = document.getElementById(nodeId.value)
+			if (!nodeElement || !("ResizeObserver" in window)) return
+			const onResize = () => updatePortPositions()
+			resizeObserver = new ResizeObserver(() => onResize())
+			resizeObserver.observe(nodeElement)
+		})
+	})
+
+	onUnmounted(() => {
+		if (resizeObserver) {
+			resizeObserver.disconnect()
+			resizeObserver = null
+		}
+	})
 </script>
 
 <style scoped>
 	.flow-node-base {
 		position: absolute;
-		width: v-bind('NODE_WIDTH + "px"');
-		min-width: 150px;
+		width: max-content; /* Allow width to grow to fit content */
+		min-width: v-bind('NODE_WIDTH + "px"'); /* Keep default minimum width */
 		user-select: none;
 		cursor: move;
 		overflow: visible;
@@ -529,6 +548,7 @@
 		font-weight: 500;
 		color: var(--text-primary, #fff);
 		user-select: none;
+		white-space: nowrap; /* Prevent wrapping to avoid height changes */
 		/* Prevent blurry text during transforms */
 		transform: translateZ(0);
 		backface-visibility: hidden;
@@ -536,7 +556,6 @@
 
 	/* NodePorts styles */
 	.node-ports {
-		width: 100%;
 		display: flex;
 		justify-content: space-between;
 	}
@@ -566,6 +585,7 @@
 	.port-label {
 		font-size: 0.9em;
 		color: var(--text-secondary, #ccc);
+		white-space: nowrap; /* Keep labels on one line so node expands horizontally */
 	}
 
 	.input-label {
