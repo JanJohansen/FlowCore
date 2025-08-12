@@ -209,7 +209,6 @@
 	}
 
 	.item-action-btn {
-		padding: 4px;
 		background: transparent;
 		border: none;
 		color: #888;
