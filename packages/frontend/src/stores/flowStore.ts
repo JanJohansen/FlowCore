@@ -1,8 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref, reactive, markRaw } from 'vue'
-import {
-    NODE_WIDTH
-} from '../components/Flow/constants'
 import type {
     IFlowModel,
     IFlowNodeModel,
@@ -92,8 +89,8 @@ export const useFlowStore = defineStore('flowStore', () => {
             typeUID,
             position,
             size: {
-                width: NODE_WIDTH,
-                height: NODE_WIDTH
+                width: 200,
+                height: 100
             },
             config: {
             }
@@ -420,7 +417,7 @@ export const useFlowStore = defineStore('flowStore', () => {
         return createFolder(path)
     }
 
-    // ===== Node Port Position Methods =====
+    // ===== Node Port Position Methods (Simplified) =====
     const updateNodePortPositions = (data: {
         nodeId: string
         ports: {
@@ -428,7 +425,6 @@ export const useFlowStore = defineStore('flowStore', () => {
             outputs: Array<{ index: number; x: number; y: number }>
         }
     }) => {
-        // console.log(`Setting port positions for node ${data.nodeId}:`, data.ports)
         nodePortPositions.value.set(data.nodeId, data.ports)
         updateConnectionPaths()
     }
@@ -436,19 +432,6 @@ export const useFlowStore = defineStore('flowStore', () => {
     const updateConnectionPaths = () => {
         // This would update SVG paths for connections
         // Implementation depends on your rendering approach
-    }
-
-    // Trigger a port position update for a specific node
-    const triggerPortPositionUpdate = (nodeId: string) => {
-        // This is a no-op function that will be observed by components
-        // to trigger their port position update logic
-        console.log(`Triggering port position update for node ${nodeId}`)
-        // We can use a simple approach like this:
-        const node = flowState.nodes.find(n => n.id === nodeId)
-        if (node) {
-            // Make a small change to the node to trigger watchers
-            node.position = { ...node.position }
-        }
     }
 
     // Update node input values
@@ -553,7 +536,6 @@ export const useFlowStore = defineStore('flowStore', () => {
 
         // Node Port Position Methods
         updateNodePortPositions,
-        triggerPortPositionUpdate,
 
         // Node Input Methods
         updateNodeInputValues,

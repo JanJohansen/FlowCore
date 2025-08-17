@@ -18,26 +18,25 @@ This eliminates complex DOM queries and position calculations
 			:is-visible="showPropertyEditor"
 			@close="showPropertyEditor = false"
 		/>
-		<div class="node-content" ref="nodeElement">
-			<div class="pre-ports">
-				<div class="floating-actions">
-					<button class="floating-btn" @click.stop="handleEdit" title="Edit">
-						<i class="fa fa-edit"></i>
-					</button>
-					<button class="floating-btn" @click.stop="handleDuplicate" title="Duplicate">
-						<i class="fa fa-copy"></i>
-					</button>
-					<button class="floating-btn delete" @click.stop="handleDelete" title="Delete">
-						<i class="fa fa-trash"></i>
-					</button>
-				</div>
-
-				<div class="node-header">
-					<slot name="header">
-						<span class="node-title">{{ nodeTypeUID }}</span>
-					</slot>
-				</div>
+		<div class="node-content" :style="nodeContentStyles">
+			<div class="floating-actions">
+				<button class="floating-btn" @click.stop="handleEdit" title="Edit">
+					<i class="fa fa-edit"></i>
+				</button>
+				<button class="floating-btn" @click.stop="handleDuplicate" title="Duplicate">
+					<i class="fa fa-copy"></i>
+				</button>
+				<button class="floating-btn delete" @click.stop="handleDelete" title="Delete">
+					<i class="fa fa-trash"></i>
+				</button>
 			</div>
+
+			<div class="node-header">
+				<slot name="header">
+					<span class="node-title">{{ nodeTypeUID }}</span>
+				</slot>
+			</div>
+
 			<div class="node-ports">
 				<!-- Left side: Input ports -->
 				<div class="ports-container inputs-container">
@@ -99,11 +98,8 @@ This eliminates complex DOM queries and position calculations
 	const node = computed(() => props.context.node)
 	const nodeDefinition = computed(() => props.context.nodeDefinition)
 
-	// Node element reference for dynamic sizing
-	const nodeElement = ref<HTMLElement>()
-
-	// Use the elegant port position composable with dynamic sizing
-	const { portPositions, getPortPosition } = usePortPositions(node, nodeDefinition, nodeElement)
+	// Use the elegant port position composable
+	const { portPositions, getPortPosition, nodeWidth, nodeHeight } = usePortPositions(node, nodeDefinition)
 
 	// Computed properties
 	const nodeId = computed(() => props.context.node.id)
@@ -276,6 +272,11 @@ This eliminates complex DOM queries and position calculations
 		transform: `translate(${position.value.x}px, ${position.value.y}px)`
 	}))
 
+	const nodeContentStyles = computed(() => ({
+		width: `${nodeWidth.value}px`,
+		height: `${nodeHeight.value}px`
+	}))
+
 	const nodeClasses = computed(() => ({
 		"is-dragging": isDragging.value
 	}))
@@ -304,6 +305,7 @@ This eliminates complex DOM queries and position calculations
 		user-select: none;
 		cursor: move;
 		overflow: visible;
+		padding-top: 30px; /* Make room for the floating actions */
 	}
 
 	/* Floating actions styles */

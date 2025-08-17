@@ -26,6 +26,7 @@
 		--error-bg: rgba(239, 68, 68, 0.1);
 		--warning-color: #f59e0b;
 		--info-color: #3b82f6;
+		--grid-size: 20px;
 	}
 
 	* {

@@ -66,6 +66,7 @@
 <script setup lang="ts">
 	import { ref, computed, provide, watchEffect, onMounted, onUnmounted } from "vue"
 	import { useFlowStore } from "../../stores/flowStore"
+	import { calculateConnectionPath as getConnectionPath } from "./composables/usePortPositions"
 	import { GRID_SIZE, MIN_ZOOM, MAX_ZOOM } from "./constants"
 	import DefaultNode from "./DefaultNode.vue"
 	import type { IFlowConnection } from "./types"
@@ -229,64 +230,44 @@
 
 	// Connection handling - now handled directly in FlowNodeBase
 
-	// Calculate connection paths
+	// Calculate connection paths using simplified approach
 	const calculateConnectionPath = (connection: IFlowConnection) => {
 		// Get source and target node port positions
 		const sourceNodePorts = nodePortPositions.value.get(connection.sourceNodeId)
 		const targetNodePorts = nodePortPositions.value.get(connection.targetNodeId)
 
 		if (!sourceNodePorts || !targetNodePorts) {
-			console.warn("Missing port positions for connection:") //, connection)
 			return "M0,0 C0,0 0,0 0,0" // Empty path if positions not available
 		}
 
-		// Get node definitions
+		// Get node definitions to find port indices
 		const sourceNodeDef = flowStore.getNodeDefinition(connection.sourceNodeId)
 		const targetNodeDef = flowStore.getNodeDefinition(connection.targetNodeId)
 
 		if (!sourceNodeDef || !targetNodeDef) {
-			console.warn("Missing node definitions for connection:") //, connection)
 			return "M0,0 C0,0 0,0 0,0"
 		}
 
-		// Get output keys for source node
+		// Find port indices
 		const outputKeys = Object.keys(sourceNodeDef.outs || {})
 		const sourcePortIndex = outputKeys.indexOf(connection.sourcePortId)
-
-		// Get input keys for target node
 		const inputKeys = Object.keys(targetNodeDef.ins || {})
 		const targetPortIndex = inputKeys.indexOf(connection.targetPortId)
 
 		if (sourcePortIndex === -1 || targetPortIndex === -1) {
-			console.warn(
-				"Port not found in node definition:",
-				sourcePortIndex === -1 ? `Source: ${connection.sourcePortId}` : `Target: ${connection.targetPortId}`
-			)
 			return "M0,0 C0,0 0,0 0,0"
 		}
 
-		// Find the specific output port
+		// Get port positions
 		const sourcePort = sourceNodePorts.outputs[sourcePortIndex]
-
-		// Find the specific input port
 		const targetPort = targetNodePorts.inputs[targetPortIndex]
 
 		if (!sourcePort || !targetPort) {
-			console.warn(
-				"Port positions not found:",
-				!sourcePort ? `Source: ${connection.sourcePortId}` : `Target: ${connection.targetPortId}`
-			)
-			return "M0,0 C0,0 0,0 0,0" // Empty path if ports not found
+			return "M0,0 C0,0 0,0 0,0"
 		}
 
-		// Calculate bezier curve control points
-		const dx = targetPort.x - sourcePort.x
-		const bezierOffset = Math.min(Math.abs(dx) * 0.5, 150) // Control point offset
-
-		// Create SVG path
-		return `M${sourcePort.x},${sourcePort.y} C${sourcePort.x + bezierOffset},${sourcePort.y} ${
-			targetPort.x - bezierOffset
-		},${targetPort.y} ${targetPort.x},${targetPort.y}`
+		// Use the simplified connection path calculation
+		return getConnectionPath(sourcePort, targetPort)
 	}
 
 	const calculateDraggingPath = computed(() => {
