@@ -5,9 +5,15 @@
 FlowCore is a monorepo-based visual flow programming platform with real-time data synchronization, IoT integration, and
 extensible node system. Built with TypeScript, Vue 3, Express, and a custom reactive database (CoreDB).
 
-## Architecture Understanding
+### Package Structure (pnpm workspace)
 
-### Core Components
+-   `@webapp/backend`: Express server with CoreDB, FlowCore, MQTT, and shared client
+-   `@webapp/frontend`: Vue 3 SPA with flow designer and dashboards
+-   `extensions`: Standalone Vue app for extension development
+
+## Architecture
+
+### Backend Core Components
 
 -   **CoreDB**: Custom reactive key-value store (`packages/backend/src/core/coreDB/CoreDB.ts`) with subscription system,
     indexing, and RPC capabilities
@@ -16,14 +22,6 @@ extensible node system. Built with TypeScript, Vue 3, Express, and a custom reac
 -   **CoreDBClient**: Client-side interface (`packages/common/src/CoreDBClient/`) with WebSocket transport for real-time
     sync
 -   **Z2M Integration**: Zigbee2MQTT bridge (`packages/backend/src/z2m/Z2M.ts`) for IoT device integration
-
-### Package Structure (pnpm workspace)
-
--   `@webapp/backend`: Express server with CoreDB, FlowCore, MQTT, and shared client
--   `@webapp/frontend`: Vue 3 SPA with flow designer and dashboards
--   `extensions`: Standalone Vue app for extension development
-
-## Development Workflows
 
 ### Essential Commands
 
@@ -62,23 +60,15 @@ Each custom node has a specific file structure in `packages/frontend/src/compone
 3. Create Vue component in `visual.vue` for node UI
 4. Use `this.ins.on()` for input listeners and `this.outs.set()` for outputs
 
-### Extension Loading
-
-FlowCore watches `CustomNodes` folder and hot-reloads changes. Use file system operations through CoreDB RPC:
-
--   `flowCore:saveCustomNodeFile`
--   `flowCore:loadCustomNodeFile`
--   `flowCore:deleteCustomNodeFile`
-
 ## CoreDB Patterns
 
 ### Data Operations
 
 -   `patch()`: Merge updates (preserves existing properties)
--   `set()`: Complete replacement
--   `get()`: Synchronous retrieval
 -   `onPatch()`: Subscribe to partial updates
+-   `set()`: Complete replacement
 -   `onSet()`: Subscribe to complete value changes
+-   `get()`: Synchronous retrieval
 
 ### RPC System
 
@@ -88,15 +78,16 @@ FlowCore watches `CustomNodes` folder and hot-reloads changes. Use file system o
 
 ### Indexing
 
-CoreDB automatically indexes object properties for efficient queries. Use `getByIndex()` for property-based lookups.
+CoreDB will index objects when requested to do so by subscribing to an index using onSet or onPatch functions... 
+Examples:
+- TBD
 
 ## Vue Frontend Patterns
 
 ### State Management
 
 -   Pinia stores in `packages/frontend/src/stores/`
--   CoreDB integration via reactive subscriptions
--   Connection status monitoring in `connectionStatusStore.ts`
+-   CoreDB integration via reactive callback subscriptions
 
 ### Component Structure
 
@@ -105,36 +96,21 @@ CoreDB automatically indexes object properties for efficient queries. Use `getBy
 -   Dashboard: `components/Dash/` with dynamic widget loading
 -   Monaco Editor integration for code editing
 
-## Integration Points
-
-### MQTT/IoT Integration
-
-Z2M class handles Zigbee2MQTT communication:
-
--   Device discovery and state tracking
--   Automatic CoreDB persistence of device states
--   Topic structure: `zigbee2mqtt/[device]/[property]`
-
 ### WebSocket Communication
 
 -   CoreDBWSServer handles real-time sync
 -   Message types: `update`, `response`, `callRequest`
 -   Automatic reconnection and resubscription
 
-## File Conventions
-
 ### Import Patterns
 
--   Use workspace imports: `@webapp/backend`, `@webapp/backend/types`
--   ES modules throughout (`"type": "module"` in package.json)
+-   Use workspace imports: `@webapp/extensions/*`, `@webapp/backend/*`
 -   Relative imports for local files
 -   Frontend imports CoreDB client from `@webapp/backend`
 
 ### TypeScript Configuration
 
--   Shared `tsconfig.json` with ES2022 target
 -   Path mapping for workspace packages
--   Strict mode enabled across all packages
 
 ## Critical Build Dependencies
 
@@ -142,6 +118,3 @@ Z2M class handles Zigbee2MQTT communication:
 -   `vite` for frontend with Vue plugin
 -   `tsc -w` for common package in watch mode
 -   `pnpm` workspace for dependency management
-
-When modifying flows or nodes, always consider the backend-frontend split and ensure proper CoreDB synchronization for
-real-time updates.
