@@ -54,6 +54,7 @@ This eliminates complex DOM queries and position calculations
 						</div>
 					</slot>
 				</div>
+				<div class="port-spacer"></div>
 
 				<!-- Right side: Output ports -->
 				<div class="ports-container outputs-container">
@@ -403,6 +404,9 @@ This eliminates complex DOM queries and position calculations
 		display: flex;
 		justify-content: space-between;
 		flex: 1;
+	}
+	.port-spacer {
+		width: 1rem;
 	}
 
 	.ports-container {
