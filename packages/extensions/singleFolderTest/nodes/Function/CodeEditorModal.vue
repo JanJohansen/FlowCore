@@ -3,32 +3,40 @@
 		<div class="modal-overlay">
 			<div class="modal-container">
 				<div class="modal-header">
-					<h3>Function Node Editor</h3>
-					<div class="tabs">
-						<button
-							v-for="tab in tabs"
-							:key="tab.id"
-							:class="['tab-button', { active: activeTab === tab.id }]"
-							@click="activeTab = tab.id"
-						>
-							{{ tab.label }}
-						</button>
-					</div>
+					<!-- Heading removed per request; close button remains -->
 					<button class="close-button" @click="$emit('close')">×</button>
 				</div>
 
 				<div class="modal-body">
-					<!-- Configuration Tab -->
-					<div v-show="activeTab === 'config'" class="config-editor">
-						<div class="config-label">Node Definition (JSON/object)</div>
-						<div class="editor-container" style="height: 300px">
-							<MonacoEditor v-model:value="localDefinitionCode" language="typescript" :options="{}" />
+					<div class="side-tabs">
+						<div class="tabs-vertical">
+							<button
+								v-for="tab in tabs"
+								:key="tab.id"
+								:class="['tab-button-vertical', { active: activeTab === tab.id }]"
+								@click="activeTab = tab.id"
+							>
+								{{ tab.label }}
+							</button>
 						</div>
-					</div>
+						<div class="tab-content">
+							<!-- Configuration Tab -->
+							<div v-show="activeTab === 'config'" class="config-editor">
+								<div class="config-label">Node Definition (JSON/object)</div>
+								<div class="editor-container" style="height: 300px">
+									<MonacoEditor
+										v-model:value="localDefinitionCode"
+										language="typescript"
+										:options="{}"
+									/>
+								</div>
+							</div>
 
-					<!-- Backend Code Editor -->
-					<div v-show="activeTab === 'backend'" class="editor-container">
-						<MonacoEditor v-model:value="localBackendCode" language="javascript" :options="{}" />
+							<!-- Backend Code Editor -->
+							<div v-show="activeTab === 'backend'" class="editor-container">
+								<MonacoEditor v-model:value="localBackendCode" language="javascript" :options="{}" />
+							</div>
+						</div>
 					</div>
 				</div>
 
@@ -177,25 +185,42 @@
 		flex: 1;
 	}
 
-	.tabs {
+	/* Layout for body with left-side vertical tabs */
+	.side-tabs {
 		display: flex;
-		gap: 4px;
-		margin-right: 16px;
+		height: 100%;
 	}
 
-	.tab-button {
-		background: #2d2d2d;
+	.tabs-vertical {
+		width: 160px;
+		background: #252526;
+		border-right: 1px solid #333;
+		display: flex;
+		flex-direction: column;
+		padding: 8px;
+		gap: 6px;
+	}
+
+	.tab-button-vertical {
+		background: transparent;
 		border: none;
 		color: #ccc;
-		padding: 6px 12px;
-		border-radius: 4px 4px 0 0;
+		text-align: left;
+		padding: 8px 12px;
+		border-radius: 4px;
 		cursor: pointer;
 	}
 
-	.tab-button.active {
+	.tab-button-vertical.active {
 		background: #1e1e1e;
 		color: #fff;
-		border-bottom: 2px solid #0078d4;
+		border-left: 3px solid #0078d4;
+	}
+
+	.tab-content {
+		flex: 1;
+		overflow: hidden;
+		padding: 12px;
 	}
 
 	.close-button {
