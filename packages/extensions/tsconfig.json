@@ -15,11 +15,11 @@
 		"noUnusedLocals": false,
 		"noUnusedParameters": false,
 		"baseUrl": ".",
+		"types": ["vite/client"],
 		"paths": {
 			"@webapp/frontend/*": ["../frontend/src/*"],
 			"@webapp/backend/*": ["../backend/src/*"]
-		},
-		"types": ["vue"]
+		}
 	},
 	"include": ["**/*.ts", "**/*.d.ts", "**/*.tsx", "**/*.vue"],
 	"vueCompilerOptions": {
