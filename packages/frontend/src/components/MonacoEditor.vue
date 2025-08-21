@@ -10,6 +10,7 @@
 		value: string
 		language: string
 		options?: any
+		extraLib?: string // TypeScript declaration content to enhance intellisense/type-checking
 	}>()
 
 	const emit = defineEmits<{
@@ -19,8 +20,60 @@
 	const editorContainer = ref<HTMLElement | null>(null)
 	let editor: monaco.editor.IStandaloneCodeEditor | null = null
 
+	// Keep a model and disposables for the extra lib so peek/defs work and we can clean up
+	let extraLibModel: monaco.editor.ITextModel | null = null
+	let extraLibDisposables: monaco.IDisposable[] = []
+	const extraLibUri = monaco.Uri.parse("ts:flowcore/extraLib.d.ts")
+
+	// Initialize JS/TS diagnostics and compiler options once
+	let defaultsInitialized = false
+	function ensureMonacoDefaults() {
+		if (defaultsInitialized) return
+		// Enable diagnostics for both JS and TS
+		monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+			noSemanticValidation: false,
+			noSyntaxValidation: false
+		})
+		monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+			noSemanticValidation: false,
+			noSyntaxValidation: false
+		})
+		// Basic compiler options – enable type checking for JS
+		monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+			checkJs: true,
+			allowJs: true,
+			allowNonTsExtensions: true,
+			target: monaco.languages.typescript.ScriptTarget.ES2020,
+			module: monaco.languages.typescript.ModuleKind.ESNext
+		})
+		// TS compiler options kept minimal to avoid surprising strictness
+		monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+			allowJs: true,
+			allowNonTsExtensions: true,
+			target: monaco.languages.typescript.ScriptTarget.ES2020,
+			module: monaco.languages.typescript.ModuleKind.ESNext
+		})
+		defaultsInitialized = true
+	}
+
 	onMounted(() => {
 		if (!editorContainer.value) return
+
+		// Ensure global defaults are set for diagnostics
+		ensureMonacoDefaults()
+
+		// Register extra lib (if provided) before creating the editor so language service is ready
+		if (props.extraLib != null) {
+			// Add to both JS and TS defaults to cover either language
+			extraLibDisposables.push(
+				monaco.languages.typescript.javascriptDefaults.addExtraLib(props.extraLib, extraLibUri.toString())
+			)
+			extraLibDisposables.push(
+				monaco.languages.typescript.typescriptDefaults.addExtraLib(props.extraLib, extraLibUri.toString())
+			)
+			// Create a model for better navigation (peek definition, references)
+			extraLibModel = monaco.editor.createModel(props.extraLib, "typescript", extraLibUri)
+		}
 
 		// Create the editor
 		editor = monaco.editor.create(editorContainer.value, {
@@ -62,11 +115,44 @@
 		}
 	)
 
+	// React to extraLib changes dynamically
+	watch(
+		() => props.extraLib,
+		(newLib) => {
+			// Dispose previous registrations
+			extraLibDisposables.forEach((d) => d.dispose())
+			extraLibDisposables = []
+			if (extraLibModel) {
+				extraLibModel.dispose()
+				extraLibModel = null
+			}
+
+			if (newLib != null) {
+				// Re-register for both JS and TS
+				extraLibDisposables.push(
+					monaco.languages.typescript.javascriptDefaults.addExtraLib(newLib, extraLibUri.toString())
+				)
+				extraLibDisposables.push(
+					monaco.languages.typescript.typescriptDefaults.addExtraLib(newLib, extraLibUri.toString())
+				)
+				extraLibModel = monaco.editor.createModel(newLib, "typescript", extraLibUri)
+			}
+		},
+		{ immediate: false }
+	)
+
 	// Clean up
 	onBeforeUnmount(() => {
 		if (editor) {
 			editor.dispose()
 			editor = null
+		}
+		// Clean up extra libs/models
+		extraLibDisposables.forEach((d) => d.dispose())
+		extraLibDisposables = []
+		if (extraLibModel) {
+			extraLibModel.dispose()
+			extraLibModel = null
 		}
 	})
 </script>

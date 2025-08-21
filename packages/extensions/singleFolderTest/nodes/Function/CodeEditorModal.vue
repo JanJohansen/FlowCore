@@ -24,11 +24,7 @@
 							<div v-show="activeTab === 'config'" class="config-editor">
 								<div class="config-label">Node Definition (JSON/object)</div>
 								<div class="editor-container" style="height: 300px">
-									<MonacoEditor
-										v-model:value="localDefinitionCode"
-										language="typescript"
-										:options="{}"
-									/>
+									<MonacoEditor v-model:value="localDefinitionCode" language="json" :options="{}" />
 								</div>
 							</div>
 
