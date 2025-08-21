@@ -11,6 +11,7 @@
 		language: string
 		options?: any
 		extraLib?: string // TypeScript declaration content to enhance intellisense/type-checking
+		fontSize?: number // Optional initial font size, can be updated reactively
 	}>()
 
 	const emit = defineEmits<{
@@ -83,6 +84,8 @@
 			automaticLayout: true,
 			minimap: { enabled: false },
 			scrollBeyondLastLine: false,
+			mouseWheelZoom: true,
+			fontSize: typeof props.fontSize === "number" ? props.fontSize : 14,
 			...props.options
 		})
 
@@ -112,6 +115,14 @@
 			if (editor) {
 				monaco.editor.setModelLanguage(editor.getModel()!, newLanguage)
 			}
+		}
+	)
+
+	// React to external fontSize prop changes
+	watch(
+		() => props.fontSize,
+		(newSize) => {
+			if (typeof newSize === "number") setFontSize(newSize)
 		}
 	)
 
