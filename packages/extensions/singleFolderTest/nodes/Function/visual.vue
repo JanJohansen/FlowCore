@@ -16,9 +16,7 @@
 				v-if="showEditor"
 				:display-name="displayName"
 				:backend-code="backendCode"
-				:ui-code="nodeUICode"
-				:input-definitions="inputDefinitions"
-				:output-definitions="outputDefinitions"
+				:node-definition="nodeDefinition"
 				@close="showEditor = false"
 				@save="saveCode"
 			/>
@@ -40,9 +38,7 @@
 	const showEditor = ref(false)
 	const displayName = ref("Function")
 	const backendCode = ref("")
-	const nodeUICode = ref("")
-	const inputDefinitions = ref<Record<string, any>>({})
-	const outputDefinitions = ref<Record<string, any>>({})
+	const nodeDefinition = ref<Record<string, any> | undefined>(undefined)
 	const logOutput = ref("Log output here:")
 
 	// Listen for log output from the backend
@@ -58,9 +54,7 @@
 		if (nodeModel?.config) {
 			displayName.value = nodeModel.config.displayName || "Function"
 			backendCode.value = nodeModel.config.backendCode || ""
-			nodeUICode.value = nodeModel.config.nodeUICode || ""
-			inputDefinitions.value = nodeModel.config.inputDefinitions || {}
-			outputDefinitions.value = nodeModel.config.outputDefinitions || {}
+			nodeDefinition.value = nodeModel.config.nodeDefinition || undefined
 		}
 	})
 
@@ -68,19 +62,11 @@
 		showEditor.value = true
 	}
 
-	function saveCode(data: {
-		displayName: string
-		backendCode: string
-		uiCode: string
-		inputDefs: Record<string, any>
-		outputDefs: Record<string, any>
-	}) {
+	function saveCode(data: { displayName: string; backendCode: string; nodeDefinition: Record<string, any> }) {
 		// Update local refs
 		displayName.value = data.displayName
 		backendCode.value = data.backendCode
-		nodeUICode.value = data.uiCode
-		inputDefinitions.value = data.inputDefs
-		outputDefinitions.value = data.outputDefs
+		nodeDefinition.value = data.nodeDefinition
 
 		// Update the node's config in the flow store
 		const flowStore = useFlowStore()
@@ -95,9 +81,7 @@
 			// Update configuration properties directly
 			nodeModel.config.displayName = data.displayName
 			nodeModel.config.backendCode = data.backendCode
-			nodeModel.config.nodeUICode = data.uiCode
-			nodeModel.config.inputDefinitions = data.inputDefs
-			nodeModel.config.outputDefinitions = data.outputDefs
+			nodeModel.config.nodeDefinition = data.nodeDefinition
 
 			// Update the node in the store
 			nodeModel.config = nodeModel.config

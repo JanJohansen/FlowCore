@@ -95,7 +95,7 @@ export default class ObjectNode extends NodeBackendBaseV1 {
                 parsedMessage = message.toString()
             }
 
-            console.log(`MQTT: Received message on topic ${topic}:`, parsedMessage)
+            // console.log(`MQTT: Received message on topic ${topic}:`, parsedMessage)
 
             // Store the topic and parsed message
             if (!this.topics[topic]) {

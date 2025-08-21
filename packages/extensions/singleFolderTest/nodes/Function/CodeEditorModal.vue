@@ -20,59 +20,15 @@
 				<div class="modal-body">
 					<!-- Configuration Tab -->
 					<div v-show="activeTab === 'config'" class="config-editor">
-						<div class="config-section">
-							<label class="config-label">Display Name</label>
-							<input v-model="localDisplayName" placeholder="Function" class="config-input" />
-							<p class="config-description">The name displayed in the node header</p>
+						<div class="config-label">Node Definition (JSON/object)</div>
+						<div class="editor-container" style="height: 300px">
+							<MonacoEditor v-model:value="localDefinitionCode" language="typescript" :options="{}" />
 						</div>
 					</div>
 
 					<!-- Backend Code Editor -->
 					<div v-show="activeTab === 'backend'" class="editor-container">
 						<MonacoEditor v-model:value="localBackendCode" language="javascript" :options="{}" />
-					</div>
-
-					<!-- UI Code Editor -->
-					<div v-show="activeTab === 'ui'" class="editor-container">
-						<MonacoEditor v-model:value="localUICode" language="javascript" :options="{}" />
-					</div>
-
-					<!-- Input Definitions Editor -->
-					<div v-show="activeTab === 'inputs'" class="definitions-editor">
-						<div v-for="(input, key) in localInputDefs" :key="key" class="definition-item">
-							<div class="definition-header">
-								<input v-model="input.name" placeholder="Input Name" class="name-input" />
-								<select v-model="input.valueType" class="type-select">
-									<option value="any">any</option>
-									<option value="string">string</option>
-									<option value="number">number</option>
-									<option value="boolean">boolean</option>
-									<option value="object">object</option>
-								</select>
-								<button @click="removeInput(key)" class="remove-btn">×</button>
-							</div>
-							<input v-model="input.description" placeholder="Description" class="description-input" />
-						</div>
-						<button @click="addInput" class="add-btn">+ Add Input</button>
-					</div>
-
-					<!-- Output Definitions Editor -->
-					<div v-show="activeTab === 'outputs'" class="definitions-editor">
-						<div v-for="(output, key) in localOutputDefs" :key="key" class="definition-item">
-							<div class="definition-header">
-								<input v-model="output.name" placeholder="Output Name" class="name-input" />
-								<select v-model="output.valueType" class="type-select">
-									<option value="any">any</option>
-									<option value="string">string</option>
-									<option value="number">number</option>
-									<option value="boolean">boolean</option>
-									<option value="object">object</option>
-								</select>
-								<button @click="removeOutput(key)" class="remove-btn">×</button>
-							</div>
-							<input v-model="output.description" placeholder="Description" class="description-input" />
-						</div>
-						<button @click="addOutput" class="add-btn">+ Add Output</button>
 					</div>
 				</div>
 
@@ -86,15 +42,13 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, computed, onMounted } from "vue"
+	import { ref, onMounted } from "vue"
 	import { MonacoEditor } from "../../../frontend-types"
 
 	const props = defineProps<{
 		displayName: string
 		backendCode: string
-		uiCode: string
-		inputDefinitions: Record<string, any>
-		outputDefinitions: Record<string, any>
+		nodeDefinition?: Record<string, any>
 	}>()
 
 	const emit = defineEmits<{
@@ -104,9 +58,7 @@
 			data: {
 				displayName: string
 				backendCode: string
-				uiCode: string
-				inputDefs: Record<string, any>
-				outputDefs: Record<string, any>
+				nodeDefinition: Record<string, any>
 			}
 		): void
 	}>()
@@ -114,18 +66,15 @@
 	// Local state
 	const localDisplayName = ref(props.displayName || "Function")
 	const localBackendCode = ref(props.backendCode || getDefaultBackendCode())
-	const localUICode = ref(props.uiCode || getDefaultUICode())
-	const localInputDefs = ref<Record<string, any>>({})
-	const localOutputDefs = ref<Record<string, any>>({})
+	const localDefinitionCode = ref<string>(
+		props.nodeDefinition ? JSON.stringify(props.nodeDefinition, null, 2) : getDefaultDefinitionCode()
+	)
 
 	// Editor tabs
 	const activeTab = ref("config")
 	const tabs = [
 		{ id: "config", label: "Configuration" },
-		{ id: "backend", label: "Backend Code" },
-		{ id: "ui", label: "UI Code" },
-		{ id: "inputs", label: "Inputs" },
-		{ id: "outputs", label: "Outputs" }
+		{ id: "backend", label: "Backend Code" }
 	]
 
 	// Monaco editor options
@@ -138,189 +87,54 @@
 		tabSize: 2
 	}
 
-	// Initialize input and output definitions
 	onMounted(() => {
-		// Convert input definitions to our format
-		if (props.inputDefinitions) {
-			Object.entries(props.inputDefinitions).forEach(([key, value]) => {
-				localInputDefs.value[key] = {
-					name: key,
-					valueType: value.valueType || "any",
-					description: value.description || ""
-				}
-			})
-		}
-
-		// If no inputs, add a default one
-		if (Object.keys(localInputDefs.value).length === 0) {
-			addInput()
-		}
-
-		// Convert output definitions to our format
-		if (props.outputDefinitions) {
-			Object.entries(props.outputDefinitions).forEach(([key, value]) => {
-				localOutputDefs.value[key] = {
-					name: key,
-					valueType: value.valueType || "any",
-					description: value.description || ""
-				}
-			})
-		}
-
-		// If no outputs, add a default one
-		if (Object.keys(localOutputDefs.value).length === 0) {
-			addOutput()
-		}
+		// nothing extra right now
 	})
-
-	// Input/Output management
-	function addInput() {
-		const newKey = `input${Object.keys(localInputDefs.value).length + 1}`
-		localInputDefs.value[newKey] = {
-			name: newKey,
-			valueType: "any",
-			description: "Input description"
-		}
-	}
-
-	function removeInput(key: string) {
-		delete localInputDefs.value[key]
-	}
-
-	function addOutput() {
-		const newKey = `output${Object.keys(localOutputDefs.value).length + 1}`
-		localOutputDefs.value[newKey] = {
-			name: newKey,
-			valueType: "any",
-			description: "Output description"
-		}
-	}
-
-	function removeOutput(key: string) {
-		delete localOutputDefs.value[key]
-	}
 
 	// Save all changes
 	function saveChanges() {
-		// Convert input definitions back to the expected format
-		const formattedInputDefs: Record<string, any> = {}
-		Object.values(localInputDefs.value).forEach((input) => {
-			formattedInputDefs[input.name] = {
-				valueType: input.valueType,
-				description: input.description
+		let parsedDefinition: Record<string, any> | null = null
+		try {
+			parsedDefinition = JSON.parse(localDefinitionCode.value)
+		} catch (err: any) {
+			// Allow simple TS-like export-less object as fallback by attempting eval-safe parsing
+			try {
+				// eslint-disable-next-line no-new-func
+				const fn = new Function("return (" + localDefinitionCode.value + ")")
+				parsedDefinition = fn()
+			} catch (err2) {
+				window.alert("Definition is not valid JSON or object literal. Please fix and try again.")
+				return
 			}
-		})
-
-		// Convert output definitions back to the expected format
-		const formattedOutputDefs: Record<string, any> = {}
-		Object.values(localOutputDefs.value).forEach((output) => {
-			formattedOutputDefs[output.name] = {
-				valueType: output.valueType,
-				description: output.description
-			}
-		})
+		}
 
 		emit("save", {
 			displayName: localDisplayName.value,
 			backendCode: localBackendCode.value,
-			uiCode: localUICode.value,
-			inputDefs: formattedInputDefs,
-			outputDefs: formattedOutputDefs
+			nodeDefinition: parsedDefinition!
 		})
 	}
 
 	// Default code templates
 	function getDefaultBackendCode() {
-		return `// Function Node Backend Code
-// Available parameters:
-// - context: Enhanced context object with node, flow, global, nodeType storage
-// - helpers: Helper functions for input/output operations and state management
-
-// Context object structure:
-// context.node.id - Node ID
-// context.node.type - Node type
-// context.node.name - Node name
-// context.node.inputs - Current input values
-// context.node.outputs - Current output values
-// context.node.config - Node configuration
-// context.node.state - Node-specific state storage
-// context.flow - Flow-level state storage
-// context.global - Global state storage
-// context.nodeType - Type-specific state storage
-
-// Helper functions:
-// helpers.getInput(inputName) - Get current input value
-// helpers.setOutput(outputName, value) - Set output value
-// helpers.log(...args) - Log messages
-// helpers.getNodeState(key) - Get node state
-// helpers.setNodeState(key, value) - Set node state
-// helpers.onNodeProperty(propName, callback) - Listen to node property changes
-// helpers.onInput(inputName, callback) - Listen to input changes
-
-// Example: Process input and set output
-const input1Value = helpers.getInput('input1');
-if (input1Value !== undefined) {
-    const result = input1Value * 2;
-    helpers.setOutput('output1', result);
-    helpers.log('Processed input:', input1Value, '-> output:', result);
-}
-
-// Example: Use node state to count executions
-let count = helpers.getNodeState('executionCount') || 0;
-count++;
-helpers.setNodeState('executionCount', count);
-helpers.log('Execution count:', count);
-`
+		return `// Function Node Backend Code\n// Write JavaScript that runs on the backend for this node.\n// You can export setup/cleanup via returning an object: { setup, cleanup } if needed.\n// Example: process an input and set an output when available.\n`
 	}
 
-	function getDefaultUICode() {
-		return `// Function Node UI Code
-// This Vue.js component code will be used to create a custom UI
-// for this function node.
-
-// Available props:
-// - context: Node context object
-// - node: Node model
-// - nodeDefinition: Node definition
-
-// Example Vue component:
-export default {
-  setup(props) {
-    const { ref, computed } = Vue;
-
-    // Access node context
-    const { context, node } = props;
-
-    // Reactive state
-    const localValue = ref('');
-
-    // Computed properties
-    const nodeId = computed(() => node.id);
-
-    // Methods
-    const handleClick = () => {
-      console.log('Button clicked in node:', nodeId.value);
-    };
-
-    // Template (as a string)
-    const template = \`
-      <div class="custom-function-ui">
-        <h4>Custom Function Node</h4>
-        <input v-model="localValue" placeholder="Enter value" />
-        <button @click="handleClick">Process</button>
-        <p>Node ID: {{ nodeId }}</p>
-      </div>
-    \`;
-
-    return {
-      localValue,
-      nodeId,
-      handleClick,
-      template
-    };
-  }
-};
-`
+	function getDefaultDefinitionCode() {
+		const def = {
+			displayName: "UserFunction",
+			ins: {},
+			outs: {},
+			description:
+				"User defined function node, defined by backend script and front end IO configuration (this json).",
+			typeUID: "com.flow.userfunction_1234",
+			category: "Basic",
+			version: "1.0.0",
+			author: "Jan Johansen",
+			company: "JJ inc.",
+			license: "MIT"
+		}
+		return JSON.stringify(def, null, 2)
 	}
 </script>
 
@@ -417,7 +231,6 @@ export default {
 	}
 
 	.config-label {
-		display: block;
 		color: #e0e0e0;
 		font-weight: bold;
 		margin-bottom: 8px;

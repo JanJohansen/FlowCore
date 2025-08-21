@@ -16,7 +16,7 @@
           "ins": {},
           "outs": {},
           "displayName": "Function",
-          "backendCode": "function setup() {\n    console.log(\"Custom function setup called.\")\n}\n\nfunction cleanup() {\n    console.log(\"Custom function cleanup called.\")\n}",
+          "backendCode": "function setup() {\n    console.log(\"Custom function setup called.\")\n\n    setInterval(()=>{\n        console.log(\"Test...\")\n    }, 2000)\n}\n\nfunction cleanup() {\n    console.log(\"Custom function cleanup called.\")\n}",
           "nodeUICode": "// Function Node UI Code\n// This Vue.js component code will be used to create a custom UI\n// for this function node.\n\n// Available props:\n// - context: Node context object\n// - node: Node model\n// - nodeDefinition: Node definition\n\n// Example Vue component:\nexport default {\n  setup(props) {\n    const { ref, computed } = Vue;\n\n    // Access node context\n    const { context, node } = props;\n\n    // Reactive state\n    const localValue = ref('');\n\n    // Computed properties\n    const nodeId = computed(() => node.id);\n\n    // Methods\n    const handleClick = () => {\n      console.log('Button clicked in node:', nodeId.value);\n    };\n\n    // Template (as a string)\n    const template = `\n      <div class=\"custom-function-ui\">\n        <h4>Custom Function Node</h4>\n        <input v-model=\"localValue\" placeholder=\"Enter value\" />\n        <button @click=\"handleClick\">Process</button>\n        <p>Node ID: {{ nodeId }}</p>\n      </div>\n    `;\n\n    return {\n      localValue,\n      nodeId,\n      handleClick,\n      template\n    };\n  }\n};\n",
           "inputDefinitions": {
             "input1": {
@@ -29,6 +29,18 @@
               "valueType": "any",
               "description": "Output description"
             }
+          },
+          "nodeDefinition": {
+            "displayName": "UserFunction",
+            "ins": {},
+            "outs": {},
+            "description": "User defined function node, defined by backend script and front end IO configuration (this json).",
+            "typeUID": "com.flow.userfunction_1234",
+            "category": "Basic",
+            "version": "1.0.0",
+            "author": "Jan Johansen",
+            "company": "JJ inc.",
+            "license": "MIT"
           }
         }
       },
