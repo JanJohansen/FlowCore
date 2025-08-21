@@ -55,12 +55,12 @@
 		const flowStore = useFlowStore()
 		const nodeModel = flowStore.flowState.nodes.find((n) => n.id === props.context.node.id)
 
-		if (nodeModel?.config?.ins) {
-			displayName.value = nodeModel.config.ins.displayName?.value || "Function"
-			backendCode.value = nodeModel.config.ins.backendCode?.value || ""
-			nodeUICode.value = nodeModel.config.ins.nodeUICode?.value || ""
-			inputDefinitions.value = nodeModel.config.ins.inputDefinitions?.value || {}
-			outputDefinitions.value = nodeModel.config.ins.outputDefinitions?.value || {}
+		if (nodeModel?.config) {
+			displayName.value = nodeModel.config.displayName || "Function"
+			backendCode.value = nodeModel.config.backendCode || ""
+			nodeUICode.value = nodeModel.config.nodeUICode || ""
+			inputDefinitions.value = nodeModel.config.inputDefinitions || {}
+			outputDefinitions.value = nodeModel.config.outputDefinitions || {}
 		}
 	})
 
@@ -84,23 +84,20 @@
 
 		// Update the node's config in the flow store
 		const flowStore = useFlowStore()
-		const nodeModel = flowStore.flowState.nodes.find((n) => n.id === props.context.node.id)
+		const nodeModel = flowStore.flowState.nodes.find((n: any) => n.id === props.context.node.id)
 
 		if (nodeModel) {
-			// Ensure config and config.ins objects exist
+			// Ensure config object exists
 			if (!nodeModel.config) {
-				nodeModel.config = { ins: {} }
-			}
-			if (!nodeModel.config.ins) {
-				nodeModel.config.ins = {}
+				nodeModel.config = {}
 			}
 
-			// Update configuration input properties
-			nodeModel.config.ins.displayName = { value: data.displayName }
-			nodeModel.config.ins.backendCode = { value: data.backendCode }
-			nodeModel.config.ins.nodeUICode = { value: data.uiCode }
-			nodeModel.config.ins.inputDefinitions = { value: data.inputDefs }
-			nodeModel.config.ins.outputDefinitions = { value: data.outputDefs }
+			// Update configuration properties directly
+			nodeModel.config.displayName = data.displayName
+			nodeModel.config.backendCode = data.backendCode
+			nodeModel.config.nodeUICode = data.uiCode
+			nodeModel.config.inputDefinitions = data.inputDefs
+			nodeModel.config.outputDefinitions = data.outputDefs
 
 			// Update the node in the store
 			nodeModel.config = nodeModel.config

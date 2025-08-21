@@ -1,160 +1,79 @@
 import { NodeBackendBaseV1 } from "../../../backend-types"
 
+
+class func {
+    setup() {
+        console.log("Setting up function...")
+    }
+    cleanup() {
+        console.log("Cleaning up function...")
+    }
+}
+
+console.log("******************************")
+let f = new Function('context', 'helpers',
+    'console.log("Hello from the function!");' +
+    "return class xyz{constructor(){console.log('Hello from xyz!');}}"
+)
+let classF = f({}, {})
+let objectF = new classF()
+console.log("******************************")
+
+
 export default class FunctionNode extends NodeBackendBaseV1 {
     nodeType = "Function"
-    // private customFunction: Function | null = null
-    // private enhancedContext: any = null
+    private customFunction: Function | null = null
+    private enhancedContext: any = null
+
+    private customSetup: () => void = () => { console.log("Custom setup for FunctionNode missing!") }
+    private customCleanup: () => void = () => { console.log("Custom cleanup for FunctionNode missing!") }
 
     setup() {
         console.log("Setting up FunctionNode:", this.context)
 
-        // // Listen for changes to the backend code
-        // this.ins.on("backendCode", (code: string) => {
-        //     if (code) {
-        //         try {
-        //             // Create a function from the provided code with enhanced context
-        //             this.customFunction = new Function('context', 'helpers', code)
+        // // Initialize enhanced context
+        // this.enhancedContext = {
+        //     node: {
+        //         id: this.context.node.id,
+        //         name: this.context.node.config?.displayName || "Function",
+        //         inputs: this.context.node.config?.inputDefinitions || {},
+        //         outputs: this.context.node.config?.outputDefinitions || {},
+        //         state: {}
+        //     },
+        //     flow: this.context.flow,
+        //     global: this.context.global
+        // }
 
-        //             // Execute the function with the enhanced context
-        //             this.executeCustomFunction()
+        // Code that goes before user provided code
+        const preCode = ""
+        // Code that goes after user provided code
+        const postCode = "; return { setup, cleanup } "
 
-        //             // Log success
-        //             this.outs.set("_log", "Backend code compiled successfully")
-        //         } catch (error: any) {
-        //             console.error("Error compiling backend code:", error)
-        //             this.outs.set("_log", `Error: ${error?.message || 'Unknown compilation error'}`)
-        //             this.customFunction = null
-        //         }
-        //     }
-        // })
+        // Initialize with current config values
+        const config = this.context.node.config
+        if (config?.backendCode) {
+            try {
+                // this.customFunction = new Function('context', config.backendCode)
+                // IDEA: Inject console.log
+                // IDEA: provide node helper parameter? - Or rely on "this"...?
 
-        // // Listen for changes to input definitions
-        // this.ins.on("inputDefinitions", (definitions: object) => {
-        //     console.log("Input definitions updated:", definitions)
-        //     this.setupInputListeners(definitions)
-        // })
+                const customFunction = new Function(preCode + config.backendCode + postCode).bind(this)
+                const { customSetup, customCleanup } = customFunction(this.enhancedContext)
+                this.customSetup = customSetup
+                this.customCleanup = customCleanup
 
-        // // Listen for changes to output definitions
-        // this.ins.on("outputDefinitions", (definitions: object) => {
-        //     console.log("Output definitions updated:", definitions)
-        //     // Update the enhanced context with new output definitions
-        //     if (this.enhancedContext) {
-        //         this.enhancedContext.node.outputs = definitions || {}
-        //     }
-        // })
+                if (this.customSetup) this.customSetup()
+                // this.outs.set("_log", "Compilation OK.")
 
-        // // Listen for changes to display name
-        // this.ins.on("displayName", (name: string) => {
-        //     console.log("Display name updated:", name)
-        //     // Update the enhanced context with new display name
-        //     if (this.enhancedContext) {
-        //         this.enhancedContext.node.name = name || this.context.node.id
-        //     }
-        // })
+            } catch (error: any) {
+                console.error("Error compiling initial backend code:", error)
+                this.outs.set("_log", `Error: ${error?.message || 'Unknown compilation error'}`)
+            }
+        }
     }
-
-    // /**
-    //  * Set up listeners for input changes based on input definitions
-    //  */
-    // private setupInputListeners(definitions: any) {
-    //     // Note: ins.on doesn't return unsubscribe functions in the current implementation
-    //     // The cleanup is handled by the base class's dbUser.unsubscribeAll()
-
-    //     if (definitions && typeof definitions === 'object') {
-    //         Object.keys(definitions).forEach(inputName => {
-    //             this.ins.on(inputName, (value: any) => {
-    //                 // Update enhanced context with new input value
-    //                 if (this.enhancedContext) {
-    //                     this.enhancedContext.node.inputs[inputName] = value
-    //                 }
-    //                 // Re-execute the custom function when input changes
-    //                 this.executeCustomFunction()
-    //             })
-    //         })
-
-    //         // Update enhanced context with input definitions
-    //         if (this.enhancedContext) {
-    //             this.enhancedContext.node.inputs = definitions
-    //         }
-    //     }
-    // }
-
-    // /**
-    //  * Create helper functions for the custom code
-    //  */
-    // private createHelpers() {
-    //     return {
-    //         // Input operations
-    //         getInput: (inputName: string) => {
-    //             return this.enhancedContext?.node?.inputs?.[inputName]
-    //         },
-
-    //         // Output operations
-    //         setOutput: (outputName: string, value: any) => {
-    //             this.outs.set(outputName, value)
-    //             if (this.enhancedContext?.node?.outputs) {
-    //                 this.enhancedContext.node.outputs[outputName] = value
-    //             }
-    //         },
-
-    //         // Logging
-    //         log: (...args: any[]) => {
-    //             console.log("FunctionNode:", ...args)
-    //             this.outs.set("_log", args.join(" "))
-    //         },
-
-    //         // State management
-    //         getNodeState: (key?: string) => {
-    //             if (key) {
-    //                 return this.enhancedContext?.node?.state?.[key]
-    //             }
-    //             return this.enhancedContext?.node?.state || {}
-    //         },
-
-    //         setNodeState: (key: string, value: any) => {
-    //             if (!this.enhancedContext.node.state) {
-    //                 this.enhancedContext.node.state = {}
-    //             }
-    //             this.enhancedContext.node.state[key] = value
-    //         },
-
-    //         // CoreDB access methods (using available base class methods)
-    //         // Note: Direct CoreDB access is limited by the base class design
-    //         // Users can access context.node, context.flow, context.global, context.nodeType for state storage
-
-    //         // Subscribe to property changes on this node
-    //         onNodeProperty: (propName: string, callback: (value: any) => void) => {
-    //             this.on(propName, callback)
-    //         },
-
-    //         // Subscribe to input changes (alternative to getInput for reactive programming)
-    //         onInput: (inputName: string, callback: (value: any) => void) => {
-    //             this.ins.on(inputName, callback)
-    //         }
-    //     }
-    // }
-
-    // executeCustomFunction() {
-    //     if (!this.customFunction) return
-
-    //     try {
-    //         // Execute the custom function with enhanced context and helpers
-    //         this.customFunction(this.enhancedContext, this.createHelpers())
-    //     } catch (error: any) {
-    //         console.error("Error executing custom function:", error)
-    //         this.outs.set("_log", `Runtime Error: ${error?.message || 'Unknown error'}`)
-    //     }
-    // }
 
     cleanup() {
         console.log("Cleaning up FunctionNode:", this.context)
-
-        // // Note: Input listeners are cleaned up by the base class's dbUser.unsubscribeAll()
-
-        // // Clear custom function
-        // this.customFunction = null
-
-        // // Clear enhanced context
-        // this.enhancedContext = null
+        if (this.customCleanup) this.customCleanup()
     }
 }

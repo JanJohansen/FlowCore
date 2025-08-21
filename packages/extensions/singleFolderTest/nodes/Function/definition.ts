@@ -9,22 +9,24 @@ export const nodeDefinition: INodeDefinition = {
     description: "Function node, defined by backend script and front end VUE component script - both in typescript.",
     company: "JJ inc.",
     license: "MIT",
-    ins: {
+    config: {
         displayName: {
-            valueType: "string",
+            type: "string",
             description: "Display name for the node header (user-friendly name)",
             default: "Function"
         },
         backendCode: {
-            valueType: "string",
-            description: "JavaScript code to execute on the backend. Receives 'context' and 'helpers' parameters."
+            type: "string",
+            description: "JavaScript code to execute on the backend. Receives 'context' and 'helpers' parameters.",
+            default: ""
         },
         nodeUICode: {
-            valueType: "string",
-            description: "Vue.js component code for the node's frontend UI. Receives context as props."
+            type: "string",
+            description: "Vue.js component code for the node's frontend UI. Receives context as props.",
+            default: ""
         },
         inputDefinitions: {
-            valueType: "object",
+            type: "object",
             description: "Object defining the node's input ports and their types.",
             default: {
                 "input1": {
@@ -34,7 +36,7 @@ export const nodeDefinition: INodeDefinition = {
             }
         },
         outputDefinitions: {
-            valueType: "object",
+            type: "object",
             description: "Object defining the node's output ports and their types.",
             default: {
                 "output1": {
@@ -44,9 +46,10 @@ export const nodeDefinition: INodeDefinition = {
             }
         }
     },
+    ins: {},
     outs: {
         _log: {
-            valueType: "string",
+            type: "string",
             description: "Log output from node backend."
         }
     }

@@ -29,12 +29,12 @@
 
 					<!-- Backend Code Editor -->
 					<div v-show="activeTab === 'backend'" class="editor-container">
-						<MonacoEditor v-model:value="localBackendCode" language="javascript" :options="editorOptions" />
+						<MonacoEditor v-model:value="localBackendCode" language="javascript" :options="{}" />
 					</div>
 
 					<!-- UI Code Editor -->
 					<div v-show="activeTab === 'ui'" class="editor-container">
-						<MonacoEditor v-model:value="localUICode" language="javascript" :options="editorOptions" />
+						<MonacoEditor v-model:value="localUICode" language="javascript" :options="{}" />
 					</div>
 
 					<!-- Input Definitions Editor -->

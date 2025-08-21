@@ -14,7 +14,22 @@
         },
         "config": {
           "ins": {},
-          "outs": {}
+          "outs": {},
+          "displayName": "Function",
+          "backendCode": "function setup() {\n    console.log(\"Custom function setup called.\")\n}\n\nfunction cleanup() {\n    console.log(\"Custom function cleanup called.\")\n}",
+          "nodeUICode": "// Function Node UI Code\n// This Vue.js component code will be used to create a custom UI\n// for this function node.\n\n// Available props:\n// - context: Node context object\n// - node: Node model\n// - nodeDefinition: Node definition\n\n// Example Vue component:\nexport default {\n  setup(props) {\n    const { ref, computed } = Vue;\n\n    // Access node context\n    const { context, node } = props;\n\n    // Reactive state\n    const localValue = ref('');\n\n    // Computed properties\n    const nodeId = computed(() => node.id);\n\n    // Methods\n    const handleClick = () => {\n      console.log('Button clicked in node:', nodeId.value);\n    };\n\n    // Template (as a string)\n    const template = `\n      <div class=\"custom-function-ui\">\n        <h4>Custom Function Node</h4>\n        <input v-model=\"localValue\" placeholder=\"Enter value\" />\n        <button @click=\"handleClick\">Process</button>\n        <p>Node ID: {{ nodeId }}</p>\n      </div>\n    `;\n\n    return {\n      localValue,\n      nodeId,\n      handleClick,\n      template\n    };\n  }\n};\n",
+          "inputDefinitions": {
+            "input1": {
+              "valueType": "any",
+              "description": "Input description"
+            }
+          },
+          "outputDefinitions": {
+            "output1": {
+              "valueType": "any",
+              "description": "Output description"
+            }
+          }
         }
       },
       {
@@ -53,7 +68,7 @@
         "id": "com.flow.output_1748987420503",
         "typeUID": "com.flow.output",
         "position": {
-          "x": 280,
+          "x": 500,
           "y": 220
         },
         "size": {
@@ -69,8 +84,8 @@
         "id": "dk.johansenweb.core.graphNodeV1_1753570729261",
         "typeUID": "dk.johansenweb.core.graphNodeV1",
         "position": {
-          "x": 280,
-          "y": 400
+          "x": 40,
+          "y": 560
         },
         "size": {
           "width": 200,
@@ -85,8 +100,8 @@
         "id": "com.flow.MqttTopics_1754344045869",
         "typeUID": "com.flow.MqttTopics",
         "position": {
-          "x": 580,
-          "y": 180
+          "x": 500,
+          "y": 0
         },
         "size": {
           "width": 200,
@@ -111,8 +126,8 @@
         "id": "com.flow.output_1754510097268",
         "typeUID": "com.flow.output",
         "position": {
-          "x": 1160,
-          "y": 140
+          "x": 1020,
+          "y": 0
         },
         "size": {
           "width": 200,
@@ -124,8 +139,8 @@
         "id": "com.flow.output_1754510105982",
         "typeUID": "com.flow.output",
         "position": {
-          "x": 1160,
-          "y": 260
+          "x": 1020,
+          "y": 100
         },
         "size": {
           "width": 200,
@@ -164,10 +179,10 @@
         "targetPortId": "in1"
       }
     ],
-    "zoom": 0.7510623853050804,
+    "zoom": 0.762342714347106,
     "pan": {
-      "x": -411.25777866946896,
-      "y": -30.055439483098155
+      "x": -7.134562026927455,
+      "y": 56.83390629481164
     },
     "id": "id_1748987363886_no6fs3gr3",
     "path": "Folder1/Test_1",
