@@ -118,6 +118,27 @@
 		}
 	)
 
+	// Zoom helpers
+	function clamp(n: number, min: number, max: number) {
+		return Math.min(max, Math.max(min, n))
+	}
+
+	function setFontSize(size: number) {
+		if (!editor) return
+		const next = clamp(size, 8, 48)
+		editor.updateOptions({ fontSize: next })
+	}
+
+	function getFontSize(): number | null {
+		if (!editor) return null
+		// Prefer reading current option if available
+		try {
+			return editor.getOption?.(monaco.editor.EditorOption.fontSize) as unknown as number
+		} catch {
+			return null
+		}
+	}
+
 	// React to external fontSize prop changes
 	watch(
 		() => props.fontSize,

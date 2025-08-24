@@ -18,21 +18,20 @@ extensible node system. Built with TypeScript, Vue 3, Express, and a custom reac
 -   **CoreDB**: Custom reactive key-value store (`packages/backend/src/core/coreDB/CoreDB.ts`) with subscription system,
     indexing, and RPC capabilities
 -   **FlowCore**: Flow execution engine (`packages/backend/src/core/FlowCore/flowCore.ts`) that manages custom nodes and
-    flow processing
--   **CoreDBClient**: Client-side interface (`packages/common/src/CoreDBClient/`) with WebSocket transport for real-time
-    sync
--   **Z2M Integration**: Zigbee2MQTT bridge (`packages/backend/src/z2m/Z2M.ts`) for IoT device integration
+    flow instantiation agains the CoreDB
+-   **CoreDBClient**: Client-side interface (`packages/common/src/CoreDBClient/`) with WebSocket/TCP transports for
+    real-time sync
 
 ### Essential Commands
 
 ```bash
-# Start all services (opens VS Code + terminals)
+# Open development setup (VS Code + terminals for frontend and backend)
 start-dev.bat  # Windows preferred method
 
-# Alternative manual start
-pnpm dev  # Starts all packages concurrently
+# Manual start
+pnpm dev  # Starts all packages concurrently and watches for changes
 
-# Build node collections (when adding custom nodes)
+# Manually build node extensions (also watched in development mode)
 pnpm run build:nodes
 ```
 
@@ -78,9 +77,10 @@ Each custom node has a specific file structure in `packages/frontend/src/compone
 
 ### Indexing
 
-CoreDB will index objects when requested to do so by subscribing to an index using onSet or onPatch functions... 
+CoreDB will index objects when requested to do so by subscribing to an index using onSet or onPatch functions...
 Examples:
-- TBD
+
+-   TBD
 
 ## Vue Frontend Patterns
 
@@ -99,18 +99,16 @@ Examples:
 ### WebSocket Communication
 
 -   CoreDBWSServer handles real-time sync
--   Message types: `update`, `response`, `callRequest`
 -   Automatic reconnection and resubscription
 
 ### Import Patterns
 
 -   Use workspace imports: `@webapp/extensions/*`, `@webapp/backend/*`
 -   Relative imports for local files
--   Frontend imports CoreDB client from `@webapp/backend`
 
 ### TypeScript Configuration
 
--   Path mapping for workspace packages
+-   Path mapping for workspace packages in `tsconfig.json`
 
 ## Critical Build Dependencies
 
